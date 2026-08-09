@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Catálogo completo | Biblioteca El Nido de Fuentemolinos</title>
+<meta name="description" content="Consulta los más de 1.000 libros de la Biblioteca El Nido de Fuentemolinos. Busca por título, autor o editorial y filtra por tema y por edad recomendada.">
+<link rel="canonical" href="https://www.bibliotecaelnido.es/catalogo.html">
+<meta name="theme-color" content="#f1f3e8">
+
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:site_name" content="Biblioteca El Nido">
+<meta property="og:title" content="Catálogo completo | Biblioteca El Nido">
+<meta property="og:description" content="Más de 1.000 libros con buscador y filtros por tema y por edad.">
+<meta property="og:url" content="https://www.bibliotecaelnido.es/catalogo.html">
+<meta property="og:image" content="https://www.bibliotecaelnido.es/icon-512.png">
+
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png?v=3">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png?v=3">
+<link rel="icon" type="image/png" sizes="48x48" href="favicon-48x48.png?v=3">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=3">
+<link rel="stylesheet" href="styles.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Catálogo de la Biblioteca El Nido",
+  "description": "Listado completo de los libros disponibles en la biblioteca vecinal de Fuentemolinos (Burgos).",
+  "url": "https://www.bibliotecaelnido.es/catalogo.html",
+  "inLanguage": "es-ES",
+  "isPartOf": {
+    "@type": "WebSite",
+    "name": "Biblioteca El Nido",
+    "url": "https://www.bibliotecaelnido.es/"
+  },
+  "about": {
+    "@type": "Library",
+    "@id": "https://www.bibliotecaelnido.es/#biblioteca",
+    "name": "Biblioteca El Nido"
+  },
+  "breadcrumb": {
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://www.bibliotecaelnido.es/index.html" },
+      { "@type": "ListItem", "position": 2, "name": "Catálogo", "item": "https://www.bibliotecaelnido.es/catalogo.html" }
+    ]
+  }
+}
+</script>
+</head>
+<body>
+<a class="saltar-a-contenido" href="#contenido">Saltar al contenido</a>
+
+<header class="cabecera">
+  <div class="cabecera__interior">
+    <a class="marca" href="index.html">
+      <img class="marca__icono" src="logo-cabecera.png?v=3" width="54" height="54" alt="Logotipo de la Biblioteca El Nido: una pila de libros con un libro abierto sobre un nido de ramas">
+      <span class="marca__texto">
+        <span class="marca__nombre">El Nido</span>
+        <span class="marca__lugar">Fuentemolinos · Burgos</span>
+      </span>
+    </a>
+    <button class="menu-boton" type="button" data-menu-boton aria-expanded="false" aria-controls="menu-principal" aria-label="Abrir el menú de navegación">
+      <span class="menu-boton__barra"></span>
+      <span class="menu-boton__barra"></span>
+      <span class="menu-boton__barra"></span>
+    </button>
+    <nav class="nav" id="menu-principal" data-menu data-abierto="false" aria-label="Navegación principal">
+      <ul class="nav__lista">
+        <li><a class="nav__enlace" href="index.html">Inicio</a></li>
+        <li><a class="nav__enlace" href="catalogo.html" aria-current="page">Catálogo</a></li>
+        <li><a class="nav__enlace" href="actividades.html">Actividades</a></li>
+        <li><a class="nav__enlace" href="faq.html">Preguntas frecuentes</a></li>
+        <li><a class="nav__enlace" href="contacto.html">Contacto</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="contenido">
+  <section class="seccion" style="padding-bottom:0">
+    <div class="contenedor">
+      <div class="seccion__cabecera">
+        <p class="antetitulo">Fondo completo</p>
+        <h1>El catálogo de El Nido</h1>
+        <p>Todo lo que hay en la estantería, tal y como está apuntado en el inventario. Busca por título, autor, editorial o colección, y afina con las etiquetas. Pulsa cualquier libro para ver su ficha completa.</p>
+      </div>
+    </div>
+  </section>
+
+  <div data-catalogo>
+    <div class="buscador">
+      <div class="contenedor">
+        <div class="buscador__campo">
+          <label class="visualmente-oculto" for="busqueda">Buscar en el catálogo por título, autor, editorial o colección</label>
+          <input type="search" id="busqueda" data-busqueda placeholder="Buscar por título, autor, editorial…" autocomplete="off">
+          <button class="buscador__limpiar" type="button" data-limpiar hidden aria-label="Borrar la búsqueda">&#10005;</button>
+        </div>
+        <button class="filtros-toggle" type="button" data-filtros-toggle aria-expanded="false" aria-controls="panel-filtros">
+          <span>Filtrar por etiquetas</span>
+          <span class="filtros-toggle__estado" data-filtros-estado>Todas</span>
+        </button>
+        <div class="filtros" id="panel-filtros" data-filtros data-abierto="false">
+          <div class="filtros__grupo">
+            <h2 class="filtros__titulo">Para quién</h2>
+            <div class="filtros__chips" data-filtros-publico></div>
+          </div>
+          <div class="filtros__grupo filtros__mas">
+            <h2 class="filtros__titulo">Temas</h2>
+            <div class="filtros__chips" data-filtros-temas></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="contenedor" style="padding-bottom:3rem">
+      <div class="aviso-js" data-aviso-js>
+        <p><strong>El buscador necesita JavaScript.</strong> Si no puedes activarlo, escríbenos a
+        <a href="mailto:hola@bibliotecaelnido.es">hola@bibliotecaelnido.es</a> y te decimos si tenemos el libro que buscas.</p>
+      </div>
+
+      <div class="resultados-info" data-info aria-live="polite"></div>
+
+      <ul class="libros" data-lista></ul>
+
+      <div class="sin-resultados" data-vacio hidden>
+        <p><strong>No hay ningún libro que encaje con esa búsqueda.</strong></p>
+        <p>Prueba con menos palabras o quita alguna etiqueta. Si crees que deberíamos tenerlo, dínoslo y lo apuntamos en la lista de deseos.</p>
+        <p><a class="boton boton--secundario" href="contacto.html">Proponer un libro</a></p>
+      </div>
+
+      <div class="cargar-mas">
+        <button class="boton boton--secundario" type="button" data-ver-mas hidden>Ver más libros</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="pie">
+  <div class="contenedor">
+    <div class="pie__rejilla">
+      <div>
+        <div class="pie__marca">
+          <img src="favicon-48x48.png?v=3" width="38" height="38" alt="">
+          <span>El Nido</span>
+        </div>
+        <p class="pie__texto">Biblioteca vecinal de Fuentemolinos. Más de mil libros cedidos por el pueblo, abiertos a quien quiera leerlos.</p>
+      </div>
+      <nav aria-label="Enlaces del pie de página">
+        <h2 class="pie__titulo">Secciones</h2>
+        <ul class="pie__lista">
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="catalogo.html">Catálogo</a></li>
+          <li><a href="actividades.html">Actividades</a></li>
+          <li><a href="faq.html">Preguntas frecuentes</a></li>
+          <li><a href="contacto.html">Contacto</a></li>
+        </ul>
+      </nav>
+      <div>
+        <h2 class="pie__titulo">Dónde estamos</h2>
+        <ul class="pie__lista">
+          <li><a href="https://www.google.com/maps/place/09453+Fuentemolinos,+Burgos" target="_blank" rel="noopener">Calle La Iglesia, 4<br>09453 Fuentemolinos (Burgos)</a></li>
+          <li><a href="tel:+34947553012">947 55 30 12</a></li>
+          <li><a href="mailto:hola@bibliotecaelnido.es">hola@bibliotecaelnido.es</a></li>
+          <li><a href="https://www.instagram.com/bibliotecaelnido/" target="_blank" rel="noopener">@bibliotecaelnido</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="pie__base">
+      <p>© <span data-anio>2026</span> Biblioteca El Nido · Fuentemolinos, Burgos</p>
+      <ul class="pie__legal">
+        <li><a href="legal.html#aviso-legal">Aviso legal</a></li>
+        <li><a href="legal.html#privacidad">Política de privacidad</a></li>
+        <li><a href="legal.html#cookies">Política de cookies</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<script src="data/libros.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

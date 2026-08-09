@@ -1,0 +1,18 @@
+# No versionar en Git (contienen datos personales o son trabajo interno).
+
+# Excel y datos extraídos: llevan nombres de quién cedió cada libro.
+datos/
+_build/books_raw.json
+_build/summary.txt
+*.xlsx
+
+# Temporales y caché.
+_build/_preview_*
+*.pyc
+__pycache__/
+.DS_Store
+Thumbs.db
+
+# Imágenes fuente que la web no usa (opcional).
+logo-sin-letras.png
+logo-recortado.png

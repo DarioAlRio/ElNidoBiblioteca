@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 1000" fill="none"
+     stroke="#7c854a" stroke-linecap="round" stroke-linejoin="round" opacity="0.22">
+  <!-- mismo árbol de tronco grueso, reflejado en horizontal -->
+  <g transform="translate(320,0) scale(-1,1)">
+    <path d="M46,1000 C38,842 78,762 64,642"  stroke-width="60"/>
+    <path d="M64,642  C56,548 100,488 90,388" stroke-width="42"/>
+    <path d="M90,388  C84,304 124,254 136,156" stroke-width="26"/>
+    <path d="M136,156 C142,110 136,72 154,30"  stroke-width="14"/>
+    <path d="M46,986 C30,984 18,978 8,966"   stroke-width="20"/>
+    <path d="M60,988 C74,986 86,982 96,972"  stroke-width="16"/>
+    <path d="M70,676 C112,660 158,628 202,560" stroke-width="20"/>
+    <path d="M202,560 C220,532 230,510 236,474" stroke-width="11"/>
+    <path d="M236,474 C250,466 258,456 262,442" stroke-width="6"/>
+    <path d="M84,494 C64,478 48,454 40,420"   stroke-width="16"/>
+    <path d="M40,420 C32,412 27,403 24,392"   stroke-width="7"/>
+    <path d="M96,364 C142,348 182,310 216,248" stroke-width="18"/>
+    <path d="M216,248 C232,224 238,200 242,168" stroke-width="10"/>
+    <path d="M242,168 C254,162 260,154 264,142" stroke-width="5"/>
+    <path d="M216,248 C248,242 268,224 288,194" stroke-width="8"/>
+    <path d="M126,218 C110,200 102,176 102,144" stroke-width="10"/>
+    <path d="M136,156 C164,146 186,124 202,90"  stroke-width="11"/>
+    <path d="M202,90 C214,84 220,76 224,64"     stroke-width="5"/>
+  </g>
+</svg>

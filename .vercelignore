@@ -1,0 +1,13 @@
+# Archivos que NO se publican en Vercel (quedan solo en tu ordenador).
+
+# Fuente de datos y trabajo interno (contienen nombres de quién cedió cada
+# libro: datos personales que no deben aparecer en internet).
+datos/
+_build/
+*.xlsx
+
+# Utilidades e imágenes fuente que la web no usa.
+Actualizar catalogo.bat
+LEEME.md
+logo-sin-letras.png
+logo-recortado.png

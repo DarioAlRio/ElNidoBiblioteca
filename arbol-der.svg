@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 1000" fill="none"
+     stroke="#7c854a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"
+     opacity="0.22">
+  <!-- mismo árbol que arbol-izq.svg, reflejado en horizontal -->
+  <g transform="translate(300,0) scale(-1,1)">
+    <path d="M40,1000 C34,840 70,760 58,640 C50,548 96,486 86,384
+             C80,300 120,250 132,150 C138,104 132,64 150,24" stroke-width="8"/>
+    <path d="M62,672 C104,656 150,624 196,556"/>
+    <path d="M196,556 C214,528 224,506 230,470"/>
+    <path d="M196,556 C230,556 258,540 286,512"/>
+    <path d="M78,486 C58,470 42,446 34,412"/>
+    <path d="M92,360 C138,344 176,306 210,244"/>
+    <path d="M210,244 C226,220 232,196 236,164"/>
+    <path d="M210,244 C242,238 262,220 282,190"/>
+    <path d="M120,214 C104,196 96,172 96,140"/>
+    <path d="M132,150 C160,140 182,118 198,84"/>
+    <path d="M230,470 C244,462 252,452 256,438" stroke-width="3"/>
+    <path d="M236,164 C248,158 254,150 258,138" stroke-width="3"/>
+    <path d="M198,84 C210,78 216,70 220,58" stroke-width="3"/>
+    <path d="M34,412 C26,404 22,396 20,384" stroke-width="3"/>
+  </g>
+</svg>
