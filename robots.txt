@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /_build/
 
-Sitemap: https://www.bibliotecaelnido.es/sitemap.xml
+Sitemap: https://elnidobiblioteca.com/sitemap.xml

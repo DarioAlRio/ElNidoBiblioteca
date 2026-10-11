@@ -34,7 +34,7 @@ pero **hay que cambiarlos antes de publicar**. Aparecen en las 6 páginas.
 | Teléfono | +34 947 55 30 12 | Ídem |
 | Correo | hola@bibliotecaelnido.es | Ídem |
 | Instagram | @bibliotecaelnido | Pie de las 6 páginas, `contacto.html`, JSON-LD de `index.html` |
-| Dominio | https://www.bibliotecaelnido.es | `canonical`, Open Graph, JSON-LD, `sitemap.xml`, `robots.txt` |
+| Dominio | https://elnidobiblioteca.com | `canonical`, Open Graph, JSON-LD, `sitemap.xml`, `robots.txt` |
 | Coordenadas | 41.5583, -3.8047 (centro del municipio) | JSON-LD de `index.html` y `contacto.html` |
 | Enlace de Google Maps | Búsqueda del municipio, sin marcador exacto | Pie de las 6 páginas y `contacto.html` |
 | Titular y NIF | Asociación Cultural Biblioteca El Nido · G00000000 | `legal.html` |
