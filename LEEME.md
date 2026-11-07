@@ -31,8 +31,8 @@ pero **hay que cambiarlos antes de publicar**. Aparecen en las 6 páginas.
 | Dato | Valor provisional | Dónde aparece |
 |---|---|---|
 | Dirección | Calle La Iglesia, 4 · 09453 Fuentemolinos (Burgos) | Pie de las 6 páginas, `contacto.html`, `legal.html`, JSON-LD de `index/contacto/actividades` |
-| Teléfono | +34 947 55 30 12 | Ídem |
-| Correo | hola@bibliotecaelnido.es | Ídem |
+| Teléfono | +34 657 88 25 81 (real) | Ídem |
+| Correo | elnidopueblo@gmail.com (real) | Ídem |
 | Instagram | @bibliotecaelnido | Pie de las 6 páginas, `contacto.html`, JSON-LD de `index.html` |
 | Dominio | https://elnidobiblioteca.com | `canonical`, Open Graph, JSON-LD, `sitemap.xml`, `robots.txt` |
 | Coordenadas | 41.5583, -3.8047 (centro del municipio) | JSON-LD de `index.html` y `contacto.html` |

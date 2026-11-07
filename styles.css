@@ -679,6 +679,28 @@ main { position: relative; z-index: 1; }
 }
 .filtros__mas { margin-top: .5rem; }
 
+/* En pantallas pequeñas cada grupo de etiquetas es UNA fila que se desliza
+   en horizontal: abierto, el panel solo suma dos líneas y los libros siguen
+   viéndose. El degradado del borde indica que hay más etiquetas. */
+@media (max-width: 860px) {
+  .filtros[data-abierto="true"] { max-height: none; overflow: visible; padding-right: 0; }
+  .filtros__grupo { flex-wrap: nowrap; align-items: center; }
+  .filtros__mas { margin-top: .4rem; }
+  .filtros__titulo { font-size: .64rem; letter-spacing: .08em; margin-right: .2rem; }
+  .filtros__chips {
+    flex-wrap: nowrap;
+    min-width: 0;
+    overflow-x: auto;
+    padding: 2px 1.2rem 2px 0;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    -webkit-mask-image: linear-gradient(to right, #000 85%, transparent);
+            mask-image: linear-gradient(to right, #000 85%, transparent);
+  }
+  .filtros__chips::-webkit-scrollbar { display: none; }
+  .filtros__chips .chip { flex: 0 0 auto; white-space: nowrap; }
+}
+
 .chip {
   padding: .32rem .75rem;
   border: 1px solid var(--borde-fuerte);
