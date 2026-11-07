@@ -381,13 +381,13 @@
       estadoFiltros.textContent = activos.length
         ? (activos.length === 1 ? activos[0] : activos.length + ' activos')
         : 'Todas';
+      if (togglear) togglear.setAttribute('data-activos', String(activos.length));
     }
 
     if (togglear && panelFiltros) {
-      // Desplegado de partida en escritorio; plegado en móvil, donde 33 chips
-      // taparían la lista. A partir de ahí manda el usuario: el redimensionado
-      // ya no vuelve a tocarlo.
-      var filtrosAbiertos = window.innerWidth > 860;
+      // Plegado de partida en todos los tamaños: la franja fija queda en una
+      // sola línea y las etiquetas aparecen solo al pulsar el botón.
+      var filtrosAbiertos = false;
       var pintarPanel = function () {
         panelFiltros.setAttribute('data-abierto', filtrosAbiertos ? 'true' : 'false');
         togglear.setAttribute('aria-expanded', filtrosAbiertos ? 'true' : 'false');

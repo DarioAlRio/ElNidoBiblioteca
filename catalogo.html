@@ -93,15 +93,17 @@
   <div data-catalogo>
     <div class="buscador">
       <div class="contenedor">
-        <div class="buscador__campo">
-          <label class="visualmente-oculto" for="busqueda">Buscar en el catálogo por título, autor, editorial o colección</label>
-          <input type="search" id="busqueda" data-busqueda placeholder="Buscar por título, autor, editorial…" autocomplete="off">
-          <button class="buscador__limpiar" type="button" data-limpiar hidden aria-label="Borrar la búsqueda">&#10005;</button>
+        <div class="buscador__fila">
+          <div class="buscador__campo">
+            <label class="visualmente-oculto" for="busqueda">Buscar en el catálogo por título, autor, editorial o colección</label>
+            <input type="search" id="busqueda" data-busqueda placeholder="Buscar por título, autor, editorial…" autocomplete="off">
+            <button class="buscador__limpiar" type="button" data-limpiar hidden aria-label="Borrar la búsqueda">&#10005;</button>
+          </div>
+          <button class="filtros-toggle" type="button" data-filtros-toggle data-activos="0" aria-expanded="false" aria-controls="panel-filtros">
+            <span>Etiquetas</span>
+            <span class="filtros-toggle__estado" data-filtros-estado>Todas</span>
+          </button>
         </div>
-        <button class="filtros-toggle" type="button" data-filtros-toggle aria-expanded="false" aria-controls="panel-filtros">
-          <span>Filtrar por etiquetas</span>
-          <span class="filtros-toggle__estado" data-filtros-estado>Todas</span>
-        </button>
         <div class="filtros" id="panel-filtros" data-filtros data-abierto="false">
           <div class="filtros__grupo">
             <h2 class="filtros__titulo">Para quién</h2>

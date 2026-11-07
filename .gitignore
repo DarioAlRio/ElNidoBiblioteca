@@ -16,3 +16,6 @@ Thumbs.db
 # Imágenes fuente que la web no usa (opcional).
 logo-sin-letras.png
 logo-recortado.png
+
+# Configuración local de Claude Code
+.claude/

@@ -587,13 +587,16 @@ main { position: relative; z-index: 1; }
   z-index: 50;
   background: var(--fondo);
   border-bottom: 1px solid var(--borde);
-  padding: 1.1rem 0;
-  margin-bottom: 2rem;
+  padding: .6rem 0;
+  margin-bottom: 1.6rem;
 }
-.buscador__campo { position: relative; }
+/* Buscador y botón de etiquetas en una sola línea: la franja fija ocupa
+   lo mínimo y las etiquetas solo aparecen al pedirlas. */
+.buscador__fila { display: flex; gap: .5rem; align-items: stretch; }
+.buscador__campo { position: relative; flex: 1 1 auto; min-width: 0; }
 .buscador__campo input {
   width: 100%;
-  padding: .85rem 2.6rem .85rem 1rem;
+  padding: .62rem 2.6rem .62rem .9rem;
   font: inherit;
   font-size: 1rem;
   color: var(--texto);
@@ -619,7 +622,7 @@ main { position: relative; z-index: 1; }
 }
 .buscador__limpiar[hidden] { display: none; }
 
-.filtros { margin-top: .9rem; }
+.filtros { margin-top: .6rem; }
 
 /* El panel de etiquetas es plegable: la barra fija no debe comerse la lista
    de libros. Con 33 temas sin plegar ocupaba casi toda la pantalla. */
@@ -632,12 +635,11 @@ main { position: relative; z-index: 1; }
 
 .filtros-toggle {
   display: flex;
-  width: 100%;
-  margin-top: .7rem;
-  padding: .6rem .9rem;
+  flex: 0 0 auto;
+  padding: 0 .9rem;
   align-items: center;
-  justify-content: space-between;
-  gap: .6rem;
+  gap: .45rem;
+  white-space: nowrap;
   background: var(--superficie);
   border: 1px solid var(--borde-fuerte);
   border-radius: var(--radio);
@@ -653,8 +655,17 @@ main { position: relative; z-index: 1; }
   font-size: .82rem;
   color: var(--texto-suave);
 }
-.filtros-toggle[aria-expanded="true"] .filtros-toggle__estado::after { content: " ▴"; }
-.filtros-toggle[aria-expanded="false"] .filtros-toggle__estado::after { content: " ▾"; }
+.filtros-toggle:not([data-activos="0"]) .filtros-toggle__estado {
+  color: var(--acento-osc);
+  font-weight: 600;
+}
+.filtros-toggle::after { content: "▾"; font-size: .8rem; color: var(--texto-suave); }
+.filtros-toggle[aria-expanded="true"]::after { content: "▴"; }
+@media (max-width: 480px) {
+  /* En móvil, «Todas» sobra: solo se muestra el estado si hay filtros. */
+  .filtros-toggle { padding: 0 .7rem; }
+  .filtros-toggle[data-activos="0"] .filtros-toggle__estado { display: none; }
+}
 .filtros__grupo { display: flex; flex-wrap: wrap; gap: .4rem; align-items: baseline; }
 .filtros__chips { display: flex; flex-wrap: wrap; gap: .4rem; }
 .filtros__titulo {
