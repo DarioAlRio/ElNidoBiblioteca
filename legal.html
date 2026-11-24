@@ -21,7 +21,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png?v=3">
 <link rel="icon" type="image/png" sizes="48x48" href="favicon-48x48.png?v=3">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=3">
-<script>/* Intro: una vez por sesión del navegador, con una cookie de sesión (ver iniciarIntro() en script.js) */try{if(document.cookie.indexOf("elnido_intro=")<0){document.cookie="elnido_intro=1; path=/; SameSite=Lax"+(location.protocol=="https:"?"; Secure":"");if(!matchMedia("(prefers-reduced-motion: reduce)").matches){document.documentElement.classList.add("con-intro");addEventListener("load",function(){var h=document.documentElement;if(!h.classList.contains("intro-montada"))h.classList.remove("con-intro")})}}localStorage.removeItem("elnido-ultima-visita")}catch(e){}</script>
+<script>/* Intro: una vez por sesión del navegador, sin cookies (ver iniciarIntro() en script.js) */(function(){try{document.cookie="elnido_intro=; path=/; max-age=0";var s=sessionStorage,l=localStorage,a=Date.now(),v=+l.getItem("elnido-activa")||0;l.setItem("elnido-activa",a);l.removeItem("elnido-ultima-visita");if(!s.getItem("elnido-intro")){s.setItem("elnido-intro","1");if(a-v>9e4&&!matchMedia("(prefers-reduced-motion: reduce)").matches){document.documentElement.classList.add("con-intro");addEventListener("load",function(){var h=document.documentElement;if(!h.classList.contains("intro-montada"))h.classList.remove("con-intro")})}}}catch(e){}})()</script>
 <link rel="stylesheet" href="styles.css">
 
 <script type="application/ld+json">
@@ -139,12 +139,12 @@
 
       <h2 id="cookies">Política de cookies</h2>
 
-      <h3>Una sola cookie técnica, y ninguna de seguimiento</h3>
-      <p>La web instala una única cookie propia, <code>elnido_intro</code>, que solo sirve para que la animación de bienvenida no se repita cada vez que recargas o cambias de página. Es una cookie de sesión: no contiene ningún dato personal (su valor es simplemente «1»), no se envía a terceros y tu navegador la borra al cerrarse.</p>
-      <p>No se instalan cookies de terceros, ni de analítica, ni publicitarias, ni de redes sociales. Tampoco se emplean balizas web, huellas digitales del navegador ni ninguna otra técnica de seguimiento.</p>
+      <h3>Esta web no utiliza cookies</h3>
+      <p>No se instalan cookies propias ni de terceros, ni de analítica, ni publicitarias, ni de redes sociales. Tampoco se emplean balizas web, huellas digitales del navegador ni ninguna otra técnica de seguimiento. Por eso no verás ningún banner de consentimiento: no hay nada que consentir.</p>
 
       <h3>Almacenamiento local</h3>
       <p>El buscador del catálogo funciona por completo dentro de tu navegador, sobre un archivo de datos que se descarga junto a la página. Ni las búsquedas ni los filtros que utilices se guardan en tu equipo ni se envían a ningún servidor.</p>
+      <p>Para que la animación de bienvenida salga solo al abrir la web y no cada vez que recargas o cambias de página, el navegador guarda dos anotaciones en su almacenamiento local: una marca de que ya la has visto en esta sesión, que se borra al cerrar el navegador, y la hora de tu última página abierta. No contienen ningún dato personal, no se envían a ningún servidor y puedes borrarlas cuando quieras desde la configuración de tu navegador.</p>
 
       <h3>Servicios externos</h3>
       <p>Los enlaces a Google Maps y a Instagram solo se activan si los pulsas. Ni el mapa ni las redes sociales están incrustados en la web, precisamente para que su visita no implique cargar recursos de terceros sin tu conocimiento. Si sigues esos enlaces, serán esos servicios los que instalen sus propias cookies conforme a sus políticas.</p>

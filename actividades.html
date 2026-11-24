@@ -20,7 +20,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png?v=3">
 <link rel="icon" type="image/png" sizes="48x48" href="favicon-48x48.png?v=3">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=3">
-<script>/* Intro: una vez por sesión del navegador, con una cookie de sesión (ver iniciarIntro() en script.js) */try{if(document.cookie.indexOf("elnido_intro=")<0){document.cookie="elnido_intro=1; path=/; SameSite=Lax"+(location.protocol=="https:"?"; Secure":"");if(!matchMedia("(prefers-reduced-motion: reduce)").matches){document.documentElement.classList.add("con-intro");addEventListener("load",function(){var h=document.documentElement;if(!h.classList.contains("intro-montada"))h.classList.remove("con-intro")})}}localStorage.removeItem("elnido-ultima-visita")}catch(e){}</script>
+<script>/* Intro: una vez por sesión del navegador, sin cookies (ver iniciarIntro() en script.js) */(function(){try{document.cookie="elnido_intro=; path=/; max-age=0";var s=sessionStorage,l=localStorage,a=Date.now(),v=+l.getItem("elnido-activa")||0;l.setItem("elnido-activa",a);l.removeItem("elnido-ultima-visita");if(!s.getItem("elnido-intro")){s.setItem("elnido-intro","1");if(a-v>9e4&&!matchMedia("(prefers-reduced-motion: reduce)").matches){document.documentElement.classList.add("con-intro");addEventListener("load",function(){var h=document.documentElement;if(!h.classList.contains("intro-montada"))h.classList.remove("con-intro")})}}}catch(e){}})()</script>
 <link rel="stylesheet" href="styles.css">
 
 <script type="application/ld+json">

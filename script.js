@@ -446,11 +446,22 @@
   }
 
   /* Intro de bienvenida ----------------------------------------------------
-     Sale una vez por sesión del navegador: el script del <head> de cada
-     página busca la cookie de sesión 'elnido_intro'; si no está, la crea y
-     marca <html class="con-intro">. Recargar o cambiar de página (o de
-     pestaña) no la repite; al cerrar el navegador, este borra la cookie y la
-     próxima vez vuelve a salir. */
+     Sale una vez cada vez que se abre el navegador, sin cookies. Lo decide
+     el script del <head> de cada página con dos anotaciones:
+     - sessionStorage 'elnido-intro': la pestaña ya la vio (sobrevive a
+       recargas y cambios de página; el navegador la borra al cerrarse);
+     - localStorage 'elnido-activa': hora del último «latido» de cualquier
+       pestaña abierta de la web. Si hay otra pestaña viva (latido de hace
+       menos de 90 s), una pestaña nueva tampoco la repite.
+     Las pestañas abiertas renuevan el latido con latirIntro(). */
+  function latirIntro() {
+    function latido() {
+      try { localStorage.setItem('elnido-activa', String(Date.now())); } catch (e) { /* sin almacenamiento */ }
+    }
+    setInterval(latido, 20000);
+    window.addEventListener('pagehide', latido);
+    document.addEventListener('visibilitychange', latido);
+  }
   var PAJARO_SVG =
     '<svg viewBox="0 0 64 52" aria-hidden="true" focusable="false">' +
       '<path class="pajaro__ala-lejos" d="M22 27 Q30 15 40 24 Q32 29 22 27Z" fill="#46502a"/>' +
@@ -610,6 +621,7 @@
   /* Arranque -------------------------------------------------------------- */
   function iniciar() {
     iniciarIntro();
+    latirIntro();
     medirCabecera();
     iniciarMenu();
     iniciarAcordeon();
