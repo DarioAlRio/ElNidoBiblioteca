@@ -500,6 +500,13 @@
     var relojes = [];
     var terminado = false;
     function fase(nombre) { intro.setAttribute('data-fase', nombre); }
+    // Cuánto tiene que crecer la página para cubrir toda la pantalla
+    function salir() {
+      var p = intro.querySelector('.intro__paginas').getBoundingClientRect();
+      var zoom = Math.max(window.innerWidth / p.width, window.innerHeight / p.height) * 1.3;
+      intro.style.setProperty('--zoom', zoom.toFixed(2));
+      fase('sale');
+    }
     function despues(ms, fn) { relojes.push(setTimeout(fn, ms)); }
 
     function terminar() {
@@ -514,7 +521,7 @@
       relojes.forEach(clearTimeout);
       relojes = [];
       intro.classList.add('intro--rapida');
-      fase('sale');
+      salir();
       despues(450, terminar);
     }
     function alTeclear(e) { if (e.key === 'Escape') saltar(); }
@@ -522,13 +529,13 @@
     intro.querySelector('.intro__saltar').addEventListener('click', saltar);
     document.addEventListener('keydown', alTeclear);
 
-    // Guion: libro (0 s) → vuelo (0,7 s) → se posa (3 s) → se abre (4,3 s) → web (5,6 s)
+    // Guion: libro (0 s) → vuelo (0,7 s) → se posa (3 s) → se abre (4,3 s) → web (5,7 s)
     requestAnimationFrame(function () { fase('entra'); });
     despues(700, function () { fase('vuela'); });
     despues(3000, function () { fase('posado'); });
     despues(4300, function () { fase('abre'); });
-    despues(5600, function () { fase('sale'); });
-    despues(6750, terminar);
+    despues(5700, salir);
+    despues(7550, terminar);
   }
 
   /* Arranque -------------------------------------------------------------- */
