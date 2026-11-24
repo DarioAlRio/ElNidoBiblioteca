@@ -446,13 +446,11 @@
   }
 
   /* Intro de bienvenida ----------------------------------------------------
-     Sale la primera vez y cuando alguien vuelve tras más de 30 días sin
-     entrar. Lo decide el script del <head> de cada página: guarda la fecha
-     de la última visita en localStorage ('elnido-ultima-visita') en cada
-     carga y, si la anterior era muy antigua o no existía, marca
-     <html class="con-intro">. Como la fecha se actualiza en cada página,
-     recargar o cambiar de página nunca la repite. */
-
+     Sale una vez por sesión del navegador: el script del <head> de cada
+     página busca la cookie de sesión 'elnido_intro'; si no está, la crea y
+     marca <html class="con-intro">. Recargar o cambiar de página (o de
+     pestaña) no la repite; al cerrar el navegador, este borra la cookie y la
+     próxima vez vuelve a salir. */
   var PAJARO_SVG =
     '<svg viewBox="0 0 64 52" aria-hidden="true" focusable="false">' +
       '<path class="pajaro__ala-lejos" d="M22 27 Q30 15 40 24 Q32 29 22 27Z" fill="#46502a"/>' +

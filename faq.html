@@ -20,7 +20,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png?v=3">
 <link rel="icon" type="image/png" sizes="48x48" href="favicon-48x48.png?v=3">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=3">
-<script>/* Intro: primera visita o vuelta tras más de 30 días sin entrar (ver iniciarIntro() en script.js) */try{var u=+localStorage.getItem("elnido-ultima-visita")||0,a=Date.now();localStorage.setItem("elnido-ultima-visita",a);if(a-u>2592e6&&!matchMedia("(prefers-reduced-motion: reduce)").matches){document.documentElement.classList.add("con-intro");addEventListener("load",function(){var h=document.documentElement;if(!h.classList.contains("intro-montada"))h.classList.remove("con-intro")})}}catch(e){}</script>
+<script>/* Intro: una vez por sesión del navegador, con una cookie de sesión (ver iniciarIntro() en script.js) */try{if(document.cookie.indexOf("elnido_intro=")<0){document.cookie="elnido_intro=1; path=/; SameSite=Lax"+(location.protocol=="https:"?"; Secure":"");if(!matchMedia("(prefers-reduced-motion: reduce)").matches){document.documentElement.classList.add("con-intro");addEventListener("load",function(){var h=document.documentElement;if(!h.classList.contains("intro-montada"))h.classList.remove("con-intro")})}}localStorage.removeItem("elnido-ultima-visita")}catch(e){}</script>
 <link rel="stylesheet" href="styles.css">
 
 <script type="application/ld+json">
