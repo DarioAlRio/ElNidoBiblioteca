@@ -1104,8 +1104,11 @@ html.intro-montada::before { display: none; }
 .intro[data-fase="guarda"] { pointer-events: none; }
 /* Hacia la estantería la portada se vuelve un lomo liso: nido y título se
    desvanecen. Hacia el logo, el nido se queda y se funde con el de la cabecera. */
+.intro[data-destino="lomo"][data-fase="sale"] .intro__nido,
 .intro[data-destino="lomo"][data-fase="guarda"] .intro__nido,
+.intro[data-destino="lomo"][data-fase="sale"] .intro__titulo,
 .intro[data-destino="lomo"][data-fase="guarda"] .intro__titulo,
+.intro[data-destino="lomo"][data-fase="sale"] .intro__tapa-frente::before,
 .intro[data-destino="lomo"][data-fase="guarda"] .intro__tapa-frente::before { opacity: 0; transition: opacity .5s ease .25s; }
 .intro[data-destino="logo"][data-fase="guarda"] .intro__tapa-frente { background: transparent; box-shadow: none; transition: background .5s, box-shadow .5s; }
 .intro[data-destino="logo"][data-fase="guarda"] .intro__paginas,

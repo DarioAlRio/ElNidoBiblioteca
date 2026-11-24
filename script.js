@@ -559,6 +559,9 @@
         { transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + sx + ',' + sy + ')' }
       ], { duration: 1150, easing: 'cubic-bezier(.45, 0, .25, 1)', fill: 'forwards' });
       vuelo.onfinish = function () {
+        // El lomo real ocupa ya su sitio: el libro volador desaparece al
+        // instante para que no asome nada deformado durante el fundido final.
+        libro.style.visibility = 'hidden';
         destino.style.visibility = '';
         destino.classList.add('lomo--llega');
         destino.addEventListener('animationend', function () {
