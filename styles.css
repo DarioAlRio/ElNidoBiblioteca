@@ -932,8 +932,8 @@ html.intro-montada::before { display: none; }
   inset: 1.5% 2% 1.5% 0;
   display: grid;
   place-content: center;
-  gap: 4cqw;
-  padding: 12%;
+  gap: 5cqw;
+  padding: 8%;
   text-align: center;
   background:
     repeating-linear-gradient(to left, #e9e1cc 0 1px, #fbf7ec 1px 3px) right / 3.5% 100% no-repeat,
@@ -944,11 +944,12 @@ html.intro-montada::before { display: none; }
   transition: box-shadow .5s ease, border-radius .5s ease;
 }
 
-.intro__paginas-titulo { font-family: var(--serif); font-size: 11cqw; line-height: 1.05; margin: 0; }
+.intro__paginas-titulo { font-family: var(--serif); font-size: 14.5cqw; line-height: 1.05; margin: 0; }
 .intro__paginas-texto {
   font-family: var(--serif);
   font-style: italic;
-  font-size: 5.4cqw;
+  font-size: 7.4cqw;
+  line-height: 1.35;
   color: #5c6626;
   margin: 0;
 }
