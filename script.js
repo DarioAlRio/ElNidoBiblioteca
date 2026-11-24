@@ -445,8 +445,95 @@
     pintar();
   }
 
+  /* Intro de bienvenida ----------------------------------------------------
+     Solo la primera vez: el <head> marca <html class="con-intro"> si no hay
+     rastro en localStorage. Aquí se apunta como vista nada más empezar, así
+     que no se repite al recargar ni al pasar a otra página. */
+  var CLAVE_INTRO = 'elnido-intro-vista';
+
+  var PAJARO_SVG =
+    '<svg viewBox="0 0 64 52" aria-hidden="true" focusable="false">' +
+      '<path class="pajaro__ala-lejos" d="M22 27 Q30 15 40 24 Q32 29 22 27Z" fill="#46502a"/>' +
+      '<path d="M14 30 L1 24 L4 31 L2 37 Z" fill="#4e3a30"/>' +
+      '<ellipse cx="28" cy="32" rx="17" ry="12" fill="#7a5540"/>' +
+      '<ellipse cx="33" cy="37" rx="11" ry="6.5" fill="#efdfc2"/>' +
+      '<path d="M30 35 Q36 30 42 33 Q37 40 30 35Z" fill="#8d63c4" opacity=".85"/>' +
+      '<g class="pajaro__cabeza">' +
+        '<circle cx="44" cy="22" r="9" fill="#7a5540"/>' +
+        '<circle cx="47" cy="20" r="1.9" fill="#1d1a16"/>' +
+        '<circle cx="47.6" cy="19.4" r=".6" fill="#fff"/>' +
+        '<path d="M52 20.5 L60 23.5 L52 26 Z" fill="#e0a030"/>' +
+      '</g>' +
+      '<path class="pajaro__ala" d="M16 29 Q28 18 40 27 Q31 39 16 33Z" fill="#6b7a3a"/>' +
+      '<g class="pajaro__patas" stroke="#b07a3a" stroke-width="1.6" stroke-linecap="round">' +
+        '<path d="M26 43 L25 50 M23 50 L28 50"/><path d="M33 43 L34 50 M32 50 L37 50"/>' +
+      '</g>' +
+    '</svg>';
+
+  function iniciarIntro() {
+    var html = document.documentElement;
+    if (!html.classList.contains('con-intro')) return;
+    try { localStorage.setItem(CLAVE_INTRO, '1'); } catch (e) { /* sin almacenamiento */ }
+
+    var intro = document.createElement('div');
+    intro.className = 'intro';
+    intro.innerHTML =
+      '<div class="intro__escena" aria-hidden="true"><div class="intro__mover"><div class="intro__libro">' +
+        '<div class="intro__paginas">' +
+          '<p class="intro__paginas-titulo">Bienvenida<br>al nido</p>' +
+          '<span class="intro__paginas-adorno"></span>' +
+          '<p class="intro__paginas-texto">Pasa, coge un libro<br>y quédate a leer.</p>' +
+        '</div>' +
+        '<div class="intro__tapa">' +
+          '<div class="intro__tapa-frente">' +
+            '<img class="intro__nido" src="icon-512.png" alt="" width="512" height="512">' +
+            '<p class="intro__titulo"><strong>El Nido</strong><span>Biblioteca vecinal</span></p>' +
+          '</div>' +
+          '<div class="intro__tapa-dorso"></div>' +
+        '</div>' +
+        '<div class="intro__pajaro">' + PAJARO_SVG + '</div>' +
+      '</div></div></div>' +
+      '<button class="intro__saltar" type="button">Saltar animación</button>';
+    document.body.insertBefore(intro, document.body.firstChild);
+    html.classList.add('intro-montada');
+
+    var relojes = [];
+    var terminado = false;
+    function fase(nombre) { intro.setAttribute('data-fase', nombre); }
+    function despues(ms, fn) { relojes.push(setTimeout(fn, ms)); }
+
+    function terminar() {
+      if (terminado) return;
+      terminado = true;
+      relojes.forEach(clearTimeout);
+      document.removeEventListener('keydown', alTeclear);
+      if (intro.parentNode) intro.parentNode.removeChild(intro);
+      html.classList.remove('con-intro', 'intro-montada');
+    }
+    function saltar() {
+      relojes.forEach(clearTimeout);
+      relojes = [];
+      intro.classList.add('intro--rapida');
+      fase('sale');
+      despues(450, terminar);
+    }
+    function alTeclear(e) { if (e.key === 'Escape') saltar(); }
+
+    intro.querySelector('.intro__saltar').addEventListener('click', saltar);
+    document.addEventListener('keydown', alTeclear);
+
+    // Guion: libro (0 s) → vuelo (0,7 s) → se posa (3 s) → se abre (4,3 s) → web (5,6 s)
+    requestAnimationFrame(function () { fase('entra'); });
+    despues(700, function () { fase('vuela'); });
+    despues(3000, function () { fase('posado'); });
+    despues(4300, function () { fase('abre'); });
+    despues(5600, function () { fase('sale'); });
+    despues(6750, terminar);
+  }
+
   /* Arranque -------------------------------------------------------------- */
   function iniciar() {
+    iniciarIntro();
     medirCabecera();
     iniciarMenu();
     iniciarAcordeon();
