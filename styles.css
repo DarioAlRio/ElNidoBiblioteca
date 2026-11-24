@@ -906,10 +906,9 @@ html.intro-montada::before { display: none; }
   display: grid;
   place-items: center;
   overflow: hidden;
-  background: var(--fondo);   /* debajo del fondo oscuro: el color de la web */
 }
-/* El fondo oscuro va en su propia capa: al salir se funde y deja el color
-   crema de la web, sin que la web asome a medias */
+/* El fondo oscuro va en su propia capa: al final se funde y deja ver la
+   web mientras el libro vuela a su sitio */
 .intro::before {
   content: "";
   position: absolute;
@@ -944,18 +943,7 @@ html.intro-montada::before { display: none; }
   color: #4d2f78;
   transition: box-shadow .5s ease, border-radius .5s ease;
 }
-.intro__paginas > * { transition: opacity .3s ease, transform .3s ease; }
-/* Velo del color de fondo de la web: al crecer, el papel se vuelve la web */
-.intro__paginas::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: var(--fondo);
-  opacity: 0;
-  transition: opacity .6s ease;
-  pointer-events: none;
-}
+
 .intro__paginas-titulo { font-family: var(--serif); font-size: 11cqw; line-height: 1.05; margin: 0; }
 .intro__paginas-texto {
   font-family: var(--serif);
@@ -1103,23 +1091,54 @@ html.intro-montada::before { display: none; }
   100% { transform: translate(55vw, -60vh) rotate(-24deg) scale(.6); opacity: 0; }
 }
 
-/* Fase: sale. Transición en tres tiempos:
-   1) se retira el texto de la página y la tapa desaparece;
-   2) la página en blanco se centra y crece hasta llenar la pantalla, a la
-      vez que el fondo oscuro se aclara y el papel toma el color de la web;
-   3) como ya es del mismo color que la web, solo queda fundirse con ella.
-   --zoom lo calcula script.js para que la página cubra cualquier pantalla. */
-.intro[data-fase="sale"] { opacity: 0; pointer-events: none; transition: opacity .6s ease 1.15s; }
-.intro[data-fase="sale"]::before { opacity: 0; transition: opacity .8s ease .3s; }
-.intro[data-fase="sale"] .intro__tapa { opacity: 0; }
-.intro[data-fase="sale"] .intro__paginas { box-shadow: none; border-radius: 0; }
-.intro[data-fase="sale"] .intro__paginas > * { opacity: 0; transform: translateY(-6px); }
-.intro[data-fase="sale"] .intro__paginas::after { opacity: 1; transition-delay: .4s; }
-.intro[data-fase="sale"] .intro__mover {
-  transform: scale(var(--zoom, 6));
-  transition: transform 1s cubic-bezier(.65, 0, .25, 1) .2s;
+/* Fase: cierra. La tapa y el libro vuelven a su posición (las transiciones
+   de base hacen el camino de vuelta). */
+
+/* Fase: guarda. El fondo oscuro se funde y deja ver la web; script.js lleva
+   el libro volando hasta un lomo de la estantería de la portada (o hasta el
+   nido del logo en las demás páginas) con la Web Animations API. */
+.intro[data-fase="guarda"]::before,
+.intro[data-fase="sale"]::before { opacity: 0; transition: opacity .8s ease; }
+.intro[data-fase="guarda"] .intro__saltar,
+.intro[data-fase="sale"] .intro__saltar { opacity: 0; transition: opacity .2s; pointer-events: none; }
+.intro[data-fase="guarda"] { pointer-events: none; }
+/* Hacia la estantería la portada se vuelve un lomo liso: nido y título se
+   desvanecen. Hacia el logo, el nido se queda y se funde con el de la cabecera. */
+.intro[data-destino="lomo"][data-fase="guarda"] .intro__nido,
+.intro[data-destino="lomo"][data-fase="guarda"] .intro__titulo,
+.intro[data-destino="lomo"][data-fase="guarda"] .intro__tapa-frente::before { opacity: 0; transition: opacity .5s ease .25s; }
+.intro[data-destino="logo"][data-fase="guarda"] .intro__tapa-frente { background: transparent; box-shadow: none; transition: background .5s, box-shadow .5s; }
+.intro[data-destino="logo"][data-fase="guarda"] .intro__paginas,
+.intro[data-destino="logo"][data-fase="guarda"] .intro__titulo,
+.intro[data-destino="logo"][data-fase="guarda"] .intro__tapa-frente::before { opacity: 0; transition: opacity .4s; }
+
+/* Fase: sale. Último fundido (y salida rápida al pulsar «Saltar»). */
+.intro[data-fase="sale"] { opacity: 0; pointer-events: none; transition: opacity .3s ease; }
+
+/* En móvil el libro abierto no cabe entero: se deja centrada la página
+   derecha y la tapa sale por la izquierda. */
+@media (max-width: 599px) {
+  .intro[data-fase="abre"] .intro__mover { transform: none; }
 }
-.intro[data-fase="sale"] .intro__saltar { opacity: 0; transition: opacity .2s; }
+.intro--rapida,
+.intro--rapida::before,
+.intro--rapida * { transition-duration: .35s !important; transition-delay: 0s !important; }
+
+/* El libro de El Nido, ya guardado: un lomo morado que se asienta */
+.lomo.lomo--nido { --tono: #6a45a0; }
+.lomo--llega { animation: lomo-llega .5s ease-out; }
+.marca__icono.lomo--llega { animation: logo-llega .5s ease-out; }
+@keyframes lomo-llega {
+  0%   { transform: translateY(-14px); }
+  55%  { transform: translateY(3px); }
+  100% { transform: none; }
+}
+@keyframes logo-llega {
+  0%   { transform: scale(1.18); }
+  100% { transform: none; }
+}
+
+.intro__saltar { opacity: 0; transition: opacity .2s; }
 /* En móvil el libro abierto no cabe entero: se deja centrada la página
    derecha y la tapa sale por la izquierda. */
 @media (max-width: 599px) {

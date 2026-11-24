@@ -499,15 +499,78 @@
 
     var relojes = [];
     var terminado = false;
+    var vuelo = null;        // animación del libro hacia su sitio
+    var destino = null;      // lomo de la estantería o logo de la cabecera
+    var desplazado = false;  // si hubo que bajar para ver la estantería
     function fase(nombre) { intro.setAttribute('data-fase', nombre); }
-    // Cuánto tiene que crecer la página para cubrir toda la pantalla
-    function salir() {
-      var p = intro.querySelector('.intro__paginas').getBoundingClientRect();
-      var zoom = Math.max(window.innerWidth / p.width, window.innerHeight / p.height) * 1.3;
-      intro.style.setProperty('--zoom', zoom.toFixed(2));
-      fase('sale');
-    }
     function despues(ms, fn) { relojes.push(setTimeout(fn, ms)); }
+
+    // Dónde se guarda el libro: un lomo de la estantería de la portada o,
+    // en las demás páginas, el nido del logo de la cabecera.
+    function elegirDestino() {
+      var lomos = document.querySelectorAll('[data-lomos] .lomo');
+      if (lomos.length) {
+        intro.setAttribute('data-destino', 'lomo');
+        return lomos[Math.floor(lomos.length / 2)];
+      }
+      intro.setAttribute('data-destino', 'logo');
+      return document.querySelector('.marca__icono');
+    }
+
+    // El libro se cierra; mientras, con el fondo aún opaco, se prepara el
+    // hueco en la estantería y se baja hasta ella si no se ve.
+    function cerrar() {
+      fase('cierra');
+      destino = elegirDestino();
+      if (!destino) return;
+      if (destino.classList.contains('lomo')) {
+        destino.style.setProperty('--tono', '#6a45a0');
+        destino.style.visibility = 'hidden';
+        var r = destino.getBoundingClientRect();
+        if (r.top < 80 || r.bottom > window.innerHeight - 20) {
+          window.scrollTo(0, window.pageYOffset + r.top - (window.innerHeight - r.height) / 2);
+          desplazado = true;
+        }
+      }
+    }
+
+    // Vuela hasta el destino encogiéndose; en la estantería acaba con la
+    // forma exacta del lomo.
+    function guardar() {
+      if (!destino || !intro.animate) { fase('sale'); despues(350, terminar); return; }
+      fase('guarda');
+      var libro = intro.querySelector('.intro__mover');
+      var a = libro.getBoundingClientRect();
+      var b = destino.getBoundingClientRect();
+      var sx, sy, x, y;
+      if (destino.classList.contains('lomo')) {
+        sx = b.width / a.width; sy = b.height / a.height; x = b.left; y = b.top;
+      } else {
+        sx = sy = (b.width * 0.85) / a.width;
+        x = b.left + (b.width - a.width * sx) / 2;
+        y = b.top + (b.height - a.height * sy) / 2;
+      }
+      var dx = x - a.left, dy = y - a.top;
+      libro.style.transformOrigin = '0 0';
+      vuelo = libro.animate([
+        { transform: 'none' },
+        { transform: 'translate(' + dx * 0.4 + 'px,' + (dy * 0.4 - 60) + 'px) scale(' +
+            (0.35 + sx * 0.65) + ',' + (0.55 + sy * 0.45) + ') rotate(-4deg)', offset: 0.5 },
+        { transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + sx + ',' + sy + ')' }
+      ], { duration: 1150, easing: 'cubic-bezier(.45, 0, .25, 1)', fill: 'forwards' });
+      vuelo.onfinish = function () {
+        destino.style.visibility = '';
+        destino.classList.add('lomo--llega');
+        destino.addEventListener('animationend', function () {
+          destino.classList.remove('lomo--llega');
+        }, { once: true });
+        fase('sale');
+        despues(320, terminar);
+        if (desplazado) {
+          setTimeout(function () { window.scrollTo({ top: 0, behavior: 'smooth' }); }, 1400);
+        }
+      };
+    }
 
     function terminar() {
       if (terminado) return;
@@ -520,22 +583,26 @@
     function saltar() {
       relojes.forEach(clearTimeout);
       relojes = [];
+      if (vuelo) { vuelo.onfinish = null; vuelo.cancel(); }
+      if (destino) destino.style.visibility = '';
+      if (desplazado) window.scrollTo(0, 0);
       intro.classList.add('intro--rapida');
-      salir();
-      despues(450, terminar);
+      fase('sale');
+      despues(400, terminar);
     }
     function alTeclear(e) { if (e.key === 'Escape') saltar(); }
 
     intro.querySelector('.intro__saltar').addEventListener('click', saltar);
     document.addEventListener('keydown', alTeclear);
 
-    // Guion: libro (0 s) → vuelo (0,7 s) → se posa (3 s) → se abre (4,3 s) → web (5,7 s)
+    // Guion: libro (0 s) → vuelo del pájaro (0,7) → se posa (3) → se abre (4,1)
+    //        → se cierra (5,9) → vuela a la estantería (7,05) → web (~8,5 s)
     requestAnimationFrame(function () { fase('entra'); });
     despues(700, function () { fase('vuela'); });
     despues(3000, function () { fase('posado'); });
-    despues(4300, function () { fase('abre'); });
-    despues(5700, salir);
-    despues(7550, terminar);
+    despues(4100, function () { fase('abre'); });
+    despues(5900, cerrar);
+    despues(7050, guardar);
   }
 
   /* Arranque -------------------------------------------------------------- */
