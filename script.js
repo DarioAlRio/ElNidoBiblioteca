@@ -446,10 +446,12 @@
   }
 
   /* Intro de bienvenida ----------------------------------------------------
-     Solo la primera vez: el <head> marca <html class="con-intro"> si no hay
-     rastro en localStorage. Aquí se apunta como vista nada más empezar, así
-     que no se repite al recargar ni al pasar a otra página. */
-  var CLAVE_INTRO = 'elnido-intro-vista';
+     Sale la primera vez y cuando alguien vuelve tras más de 30 días sin
+     entrar. Lo decide el script del <head> de cada página: guarda la fecha
+     de la última visita en localStorage ('elnido-ultima-visita') en cada
+     carga y, si la anterior era muy antigua o no existía, marca
+     <html class="con-intro">. Como la fecha se actualiza en cada página,
+     recargar o cambiar de página nunca la repite. */
 
   var PAJARO_SVG =
     '<svg viewBox="0 0 64 52" aria-hidden="true" focusable="false">' +
@@ -473,7 +475,6 @@
   function iniciarIntro() {
     var html = document.documentElement;
     if (!html.classList.contains('con-intro')) return;
-    try { localStorage.setItem(CLAVE_INTRO, '1'); } catch (e) { /* sin almacenamiento */ }
 
     var intro = document.createElement('div');
     intro.className = 'intro';
