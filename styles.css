@@ -1172,3 +1172,36 @@ html.intro-montada::before { display: none; }
 }
 .intro__saltar:hover,
 .intro__saltar:focus-visible { background: rgba(255, 255, 255, .18); }
+
+/* 13. Pasar página al cambiar de sección --------------------------------
+   Transición entre páginas del navegador (View Transitions): la página que
+   se deja gira sobre su borde izquierdo, como una hoja que se pasa, y deja
+   ver la nueva debajo. La cabecera no se mueve. En navegadores sin soporte
+   (p. ej. Firefox) se navega como siempre, sin animación. */
+@view-transition { navigation: auto; }
+
+.cabecera { view-transition-name: cabecera; }
+
+::view-transition-group(root) { animation-duration: .6s; }
+::view-transition-old(root) {
+  z-index: 2;
+  transform-origin: left center;
+  animation: hoja-pasa .6s cubic-bezier(.5, 0, .4, 1) both;
+}
+::view-transition-new(root) {
+  z-index: 1;
+  animation: hoja-aparece .6s ease-out both;
+}
+@keyframes hoja-pasa {
+  0%   { transform: perspective(2200px) rotateY(0); filter: brightness(1); box-shadow: 0 0 0 rgba(0, 0, 0, 0); }
+  60%  { opacity: 1; }
+  100% { transform: perspective(2200px) rotateY(-95deg); filter: brightness(.82); opacity: 0; box-shadow: -30px 0 60px rgba(0, 0, 0, .25); }
+}
+@keyframes hoja-aparece {
+  from { filter: brightness(.88); transform: scale(.985); }
+  to   { filter: none; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+}
