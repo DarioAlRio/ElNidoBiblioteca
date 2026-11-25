@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /_build/
+Disallow: /pruebas/
 
 Sitemap: https://elnidobiblioteca.com/sitemap.xml

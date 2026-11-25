@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pruebas de diseño | Biblioteca El Nido</title>
+<meta name="description" content="Página de pruebas: propuesta de una web menos minimalista para la Biblioteca El Nido.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#2c3320">
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png?v=3">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png?v=3">
+<link rel="icon" type="image/png" sizes="48x48" href="../favicon-48x48.png?v=3">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png?v=3">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="pruebas.css">
+</head>
+<body class="p-pagina">
+<a class="saltar-a-contenido" href="#contenido">Saltar al contenido</a>
+
+<p class="p-aviso">🧪 Página de pruebas: propuesta de diseño, no enlazada en la web. <a href="../index.html">Volver a la web actual</a></p>
+
+<header class="cabecera">
+  <div class="cabecera__interior">
+    <a class="marca" href="../index.html">
+      <img class="marca__icono" src="../logo-cabecera.png?v=3" width="54" height="54" alt="Logotipo de la Biblioteca El Nido: una pila de libros con un libro abierto sobre un nido de ramas">
+      <span class="marca__texto">
+        <span class="marca__nombre">El Nido</span>
+        <span class="marca__lugar">Fuentemolinos · Burgos</span>
+      </span>
+    </a>
+    <button class="menu-boton" type="button" data-menu-boton aria-expanded="false" aria-controls="menu-principal" aria-label="Abrir el menú de navegación">
+      <span class="menu-boton__barra"></span>
+      <span class="menu-boton__barra"></span>
+      <span class="menu-boton__barra"></span>
+    </button>
+    <nav class="nav" id="menu-principal" data-menu data-abierto="false" aria-label="Navegación principal">
+      <ul class="nav__lista">
+        <li><a class="nav__enlace" href="../index.html">Inicio</a></li>
+        <li><a class="nav__enlace" href="../catalogo.html">Catálogo</a></li>
+        <li><a class="nav__enlace" href="../actividades.html">Actividades</a></li>
+        <li><a class="nav__enlace" href="../faq.html">Preguntas frecuentes</a></li>
+        <li><a class="nav__enlace" href="../contacto.html">Contacto</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="contenido">
+
+  <!-- 1. PORTADA ILUSTRADA -->
+  <section class="p-portada">
+    <div class="contenedor p-portada__interior">
+      <div class="p-portada__texto">
+        <p class="p-antetitulo p-antetitulo--claro">Biblioteca vecinal · Fuentemolinos</p>
+        <h1>Un nido de libros en mitad de la Ribera</h1>
+        <p class="p-portada__entradilla">Más de mil libros cedidos por los vecinos, ordenados uno a uno y abiertos a quien quiera llevárselos a casa. Sin cuotas, sin carné y sin prisa.</p>
+        <div class="portada__acciones">
+          <a class="boton boton--principal" href="../catalogo.html">Explorar el catálogo</a>
+          <a class="boton p-boton--claro" href="../contacto.html">Cómo visitarnos</a>
+        </div>
+      </div>
+
+      <div class="p-ilustracion" aria-hidden="true">
+        <svg class="p-ilustracion__rama" viewBox="0 0 560 420">
+          <g fill="none" stroke-linecap="round">
+            <path d="M600 120 C 500 150, 440 235, 330 262 S 150 280, 20 350" stroke="#4a3626" stroke-width="16"/>
+            <path d="M600 120 C 500 150, 440 235, 330 262 S 150 280, 20 350" stroke="#6b5338" stroke-width="9"/>
+            <path d="M470 175 q 10 -50 50 -80" stroke="#4a3626" stroke-width="6"/>
+            <path d="M200 285 q -20 40 -60 52" stroke="#4a3626" stroke-width="5"/>
+            <path d="M110 316 q 0 -40 -30 -70" stroke="#4a3626" stroke-width="4"/>
+          </g>
+          <g>
+            <path d="M520 95 q 18 -22 44 -14 q -18 24 -44 14z" fill="#a3ab6c"/>
+            <path d="M505 112 q 26 -6 40 14 q -26 8 -40 -14z" fill="#8b9455"/>
+            <path d="M440 200 q 8 30 36 40 q 2 -30 -36 -40z" fill="#6f7a3a"/>
+            <path d="M400 222 q -10 -30 8 -52 q 14 28 -8 52z" fill="#a3ab6c"/>
+            <path d="M140 337 q -30 6 -44 30 q 32 2 44 -30z" fill="#8b9455"/>
+            <path d="M80 246 q -26 -6 -36 -30 q 30 0 36 30z" fill="#a3ab6c"/>
+            <path d="M240 282 q 6 28 32 38 q 0 -28 -32 -38z" fill="#6f7a3a"/>
+            <path d="M60 335 q 10 -24 34 -26 q -8 24 -34 26z" fill="#6f7a3a"/>
+          </g>
+        </svg>
+        <img class="p-ilustracion__nido" src="../icon-512.png" alt="" width="512" height="512">
+        <div class="p-ilustracion__pajaro">
+          <svg viewBox="0 0 64 52">
+            <path d="M14 30 L1 24 L4 31 L2 37 Z" fill="#4e3a30"/>
+            <ellipse cx="28" cy="32" rx="17" ry="12" fill="#7a5540"/>
+            <ellipse cx="33" cy="37" rx="11" ry="6.5" fill="#efdfc2"/>
+            <path d="M30 35 Q36 30 42 33 Q37 40 30 35Z" fill="#8d63c4" opacity=".85"/>
+            <g class="p-pajaro__cabeza">
+              <circle cx="44" cy="22" r="9" fill="#7a5540"/>
+              <circle cx="47" cy="20" r="1.9" fill="#1d1a16"/>
+              <circle cx="47.6" cy="19.4" r=".6" fill="#fff"/>
+              <path d="M52 20.5 L60 23.5 L52 26 Z" fill="#e0a030"/>
+            </g>
+            <path d="M16 29 Q28 18 40 27 Q31 39 16 33Z" fill="#6b7a3a"/>
+            <g stroke="#b07a3a" stroke-width="1.6" stroke-linecap="round">
+              <path d="M26 43 L25 50 M23 50 L28 50"/><path d="M33 43 L34 50 M32 50 L37 50"/>
+            </g>
+          </svg>
+        </div>
+        <span class="p-hoja p-hoja--1"></span>
+        <span class="p-hoja p-hoja--2"></span>
+        <span class="p-hoja p-hoja--3"></span>
+      </div>
+    </div>
+
+    <svg class="p-ola" viewBox="0 0 1440 70" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 40 C 240 80, 480 0, 720 30 S 1200 70, 1440 25 V70 H0 Z"/>
+    </svg>
+  </section>
+
+  <!-- CIFRAS con adornos -->
+  <section class="p-papel p-cifras-seccion">
+    <div class="contenedor">
+      <ul class="p-cifras">
+        <li><span class="p-cifras__icono" aria-hidden="true">📚</span><strong>1.096</strong><span>libros catalogados</span></li>
+        <li><span class="p-cifras__icono" aria-hidden="true">🏷️</span><strong>34</strong><span>etiquetas temáticas</span></li>
+        <li><span class="p-cifras__icono" aria-hidden="true">🪙</span><strong>0 €</strong><span>coste del préstamo</span></li>
+        <li><span class="p-cifras__icono" aria-hidden="true">🏡</span><strong>1</strong><span>pueblo detrás</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 2. TEXTURAS Y ADORNOS: cómo funciona -->
+  <section class="p-papel seccion">
+    <div class="contenedor">
+      <div class="p-cabecera">
+        <p class="p-antetitulo">Cómo funciona</p>
+        <h2>Tres pasos y ya estás leyendo</h2>
+        <span class="p-separador" aria-hidden="true"></span>
+        <p>El Nido lo sostienen los propios vecinos. No hay mostrador ni informática: hay una libreta, una estantería y confianza.</p>
+      </div>
+      <ol class="p-pasos">
+        <li class="p-paso">
+          <span class="p-paso__numero" aria-hidden="true">I</span>
+          <h3>Busca lo que te apetece</h3>
+          <p>Consulta el catálogo desde casa, filtra por tema o por edad y apunta el título que te interese.</p>
+        </li>
+        <li class="p-paso">
+          <span class="p-paso__numero" aria-hidden="true">II</span>
+          <h3>Pásate en horario de apertura</h3>
+          <p>Miércoles y viernes de 17:00 a 20:00, y sábados de 11:00 a 14:00. Siempre hay alguien de guardia.</p>
+        </li>
+        <li class="p-paso">
+          <span class="p-paso__numero" aria-hidden="true">III</span>
+          <h3>Apúntalo y llévatelo</h3>
+          <p>Escribes tu nombre y el título en la libreta de préstamos. Tienes un mes para devolverlo, ampliable si lo pides.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 3. BANDA MORADA: la estantería -->
+  <section class="p-banda p-banda--morada">
+    <div class="contenedor p-banda__rejilla">
+      <div>
+        <p class="p-antetitulo p-antetitulo--claro">El elemento estrella</p>
+        <h2>Saca un libro de la estantería</h2>
+        <span class="p-separador p-separador--claro" aria-hidden="true"></span>
+        <p>Pulsa cualquier lomo y te recomendamos un libro del fondo al azar. Si no te convence, pide otro: hay más de mil esperando.</p>
+        <p><a class="boton p-boton--claro" href="../catalogo.html">Ver el catálogo completo</a></p>
+      </div>
+      <div class="estanteria" data-estanteria>
+        <h3 class="estanteria__titulo">Saca un libro de la estantería</h3>
+        <ul class="estanteria__lomos" data-lomos aria-label="Estantería con libros del catálogo"></ul>
+        <div class="recomendacion" data-recomendacion aria-live="polite">
+          <p>Cargando la estantería…</p>
+        </div>
+        <div class="recomendacion__pie">
+          <button class="boton boton--fantasma" type="button" data-otro-libro>Dame otro libro</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3b. BANDA OLIVA: qué vas a encontrar, como cubiertas -->
+  <section class="p-banda p-banda--oliva">
+    <div class="contenedor">
+      <div class="p-cabecera">
+        <p class="p-antetitulo p-antetitulo--claro">Qué vas a encontrar</p>
+        <h2>De los cuentos de siempre a la enciclopedia del bricolaje</h2>
+        <span class="p-separador p-separador--claro" aria-hidden="true"></span>
+      </div>
+      <div class="p-estante">
+        <a class="p-libro" href="../catalogo.html" style="--c:#a24a26">
+          <span class="p-libro__cinta">Infantil</span>
+          <span class="p-libro__emoji" aria-hidden="true">🧸</span>
+          <span class="p-libro__titulo">Infantil</span>
+          <span class="p-libro__autor">Álbumes y primeros lectores</span>
+        </a>
+        <a class="p-libro" href="../catalogo.html" style="--c:#3f5b63">
+          <span class="p-libro__cinta">Juvenil</span>
+          <span class="p-libro__emoji" aria-hidden="true">🎒</span>
+          <span class="p-libro__titulo">Juvenil</span>
+          <span class="p-libro__autor">Aventura y fantasía</span>
+        </a>
+        <a class="p-libro" href="../catalogo.html" style="--c:#6a45a0">
+          <span class="p-libro__cinta">Adultos</span>
+          <span class="p-libro__emoji" aria-hidden="true">📖</span>
+          <span class="p-libro__titulo">Narrativa</span>
+          <span class="p-libro__autor">Novela, clásicos y misterio</span>
+        </a>
+        <a class="p-libro" href="../catalogo.html" style="--c:#8a6a3d">
+          <span class="p-libro__cinta">Todos</span>
+          <span class="p-libro__emoji" aria-hidden="true">🍲</span>
+          <span class="p-libro__titulo">Práctica</span>
+          <span class="p-libro__autor">Cocina, huerto y consulta</span>
+        </a>
+      </div>
+      <div class="p-balda" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <!-- 4. FICHAS TIPO LIBRO: así sería el catálogo -->
+  <section class="p-papel seccion">
+    <div class="contenedor">
+      <div class="p-cabecera">
+        <p class="p-antetitulo">Así se verían las fichas del catálogo</p>
+        <h2>Cada libro, con su propia cubierta</h2>
+        <span class="p-separador" aria-hidden="true"></span>
+        <p>En lugar de tarjetas blancas, cada ficha es una cubierta de color con su lomo. Pasa el ratón por encima.</p>
+      </div>
+      <div class="p-fichas" data-p-fichas></div>
+    </div>
+  </section>
+
+  <!-- El proyecto, con capitular y cita -->
+  <section class="p-banda p-banda--crema">
+    <div class="contenedor contenedor--estrecho">
+      <div class="p-cabecera">
+        <p class="p-antetitulo">El proyecto</p>
+        <h2>Un pueblo pequeño con una biblioteca grande</h2>
+        <span class="p-separador" aria-hidden="true"></span>
+      </div>
+      <p class="p-capitular">El Nido nació de una idea sencilla: en Fuentemolinos había libros repartidos por muchas casas y ninguna estantería común donde encontrarlos. Los vecinos fueron trayendo lo que tenían —de la enciclopedia heredada al cuento que ya nadie leía— y entre todos se catalogaron uno a uno.</p>
+      <blockquote class="p-cita">
+        <p>Hoy el fondo pasa de los mil títulos y sigue creciendo, porque cada libro que llega es también un trocito de la historia del pueblo.</p>
+      </blockquote>
+      <p class="p-centro"><a class="boton boton--principal" href="../actividades.html">Ver las actividades del año</a></p>
+    </div>
+  </section>
+
+  <div class="p-rama-pie" aria-hidden="true"></div>
+</main>
+
+<footer class="pie">
+  <div class="contenedor">
+    <div class="pie__rejilla">
+      <div>
+        <div class="pie__marca">
+          <img src="../favicon-48x48.png?v=3" width="38" height="38" alt="">
+          <span>El Nido</span>
+        </div>
+        <p class="pie__texto">Biblioteca vecinal de Fuentemolinos. Más de mil libros cedidos por el pueblo, abiertos a quien quiera leerlos.</p>
+      </div>
+      <nav aria-label="Enlaces del pie de página">
+        <h2 class="pie__titulo">Secciones</h2>
+        <ul class="pie__lista">
+          <li><a href="../index.html">Inicio</a></li>
+          <li><a href="../catalogo.html">Catálogo</a></li>
+          <li><a href="../actividades.html">Actividades</a></li>
+          <li><a href="../faq.html">Preguntas frecuentes</a></li>
+          <li><a href="../contacto.html">Contacto</a></li>
+        </ul>
+      </nav>
+      <div>
+        <h2 class="pie__titulo">Dónde estamos</h2>
+        <ul class="pie__lista">
+          <li><a href="https://www.google.com/maps/place/09453+Fuentemolinos,+Burgos" target="_blank" rel="noopener">Calle La Iglesia, 4<br>09453 Fuentemolinos (Burgos)</a></li>
+          <li><a href="tel:+34657882581">657 88 25 81</a></li>
+          <li><a href="mailto:elnidopueblo@gmail.com">elnidopueblo@gmail.com</a></li>
+          <li><a href="https://www.instagram.com/bibliotecaelnido/" target="_blank" rel="noopener">@bibliotecaelnido</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="pie__base">
+      <p>© <span data-anio>2026</span> Biblioteca El Nido · Fuentemolinos, Burgos</p>
+      <ul class="pie__legal">
+        <li><a href="../legal.html#aviso-legal">Aviso legal</a></li>
+        <li><a href="../legal.html#privacidad">Política de privacidad</a></li>
+        <li><a href="../legal.html#cookies">Política de cookies</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<script src="../data/destacados.js"></script>
+<script src="../script.js"></script>
+<script src="pruebas.js"></script>
+</body>
+</html>

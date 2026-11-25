@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="0 0 320 320">
+  <!-- Grano de papel: ruido muy suave, en mosaico sin costuras -->
+  <filter id="grano" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="3" stitchTiles="stitch"/>
+    <feColorMatrix values="0 0 0 0 .32  0 0 0 0 .27  0 0 0 0 .16  0 0 0 .09 0"/>
+  </filter>
+  <filter id="fibras" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency=".012 .22" numOctaves="2" seed="7" stitchTiles="stitch"/>
+    <feColorMatrix values="0 0 0 0 .4  0 0 0 0 .34  0 0 0 0 .2  0 0 0 .05 0"/>
+  </filter>
+  <rect width="320" height="320" filter="url(#fibras)"/>
+  <rect width="320" height="320" filter="url(#grano)"/>
+</svg>
