@@ -276,8 +276,9 @@
       [[290, 107], [385, 107], [422, 122], [422, 145], [390, 145], [390, B], [290, B]],
       [[390, 145], [487, 145], [518, 158], [518, 183], [493, 183], [493, B], [390, B]],
       [[493, 183], [592, 183], [615, 193], [615, 223], [597, 223], [597, B], [493, B]],
+      // el 8 es el lomo morado de El Nido, donde aterriza el libro de la intro
       rect(597, 695, 223), rect(695, 800, 65), rect(803, 900, 102),
-      rect(905, 1007, 140), rect(1012, 1117, 180), rect(1120, 1215, 220),
+      rect(904, 1010, 137), rect(1012, 1117, 180), rect(1120, 1215, 220),
       [[1183, 80], [1218, 57], [1316, 57], [1316, B], [1218, B], [1218, 220], [1183, 220]],
       rect(1318, 1416, 98), rect(1422, 1524, 138), rect(1527, 1630, 175),
       [[1580, 167], [1633, 153], [1728, 153], [1728, B], [1633, B], [1633, 175], [1580, 175]]
@@ -696,7 +697,6 @@
       destino = elegirDestino();
       if (!destino) return;
       if (destino.classList.contains('lomo')) {
-        destino.style.setProperty('--tono', '#6a45a0');
         destino.style.visibility = 'hidden';
         var r = destino.getBoundingClientRect();
         if (r.top < 80 || r.bottom > window.innerHeight - 20) {

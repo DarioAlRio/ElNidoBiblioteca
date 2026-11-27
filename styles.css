@@ -1128,18 +1128,19 @@ html.intro-montada::before { display: none; }
   overflow: hidden;
 }
 .intro__mover img { display: block; width: 100%; height: 100%; }
-/* Camino de la estantería la portada se vuelve un lomo liso */
+/* Camino de la estantería la portada se convierte en el lomo morado que
+   espera en la foto de la estantería (img/intro/lomo.webp) */
 .intro__mover::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: #6a45a0;
+  background: #5b3f8c url("img/intro/lomo.webp") center / 100% 100% no-repeat;
   opacity: 0;
 }
 .intro[data-fase="cierra"] .intro__mover,
 .intro[data-fase="guarda"] .intro__mover { visibility: visible; }
 .intro[data-fase="guarda"] .intro__mover { box-shadow: 0 14px 30px rgba(0, 0, 0, .3); }
-.intro[data-destino="lomo"][data-fase="guarda"] .intro__mover::after { opacity: 1; transition: opacity .55s ease .2s; }
+.intro[data-destino="lomo"][data-fase="guarda"] .intro__mover::after { opacity: 1; transition: opacity .5s ease .15s; }
 
 /* Fase: guarda. Fondo y vídeo se funden y dejan ver la web */
 .intro[data-fase="guarda"]::before,
