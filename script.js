@@ -610,7 +610,7 @@
     window.addEventListener('pagehide', latido);
     document.addEventListener('visibilitychange', latido);
   }
-  // La intro es un vídeo sin sonido del libro (img/intro/intro.mp4, 960×540).
+  // La intro es un vídeo sin sonido del libro (img/intro/intro.mp4, 1280×720; las medidas de INTRO van en una escala de 960×540).
   // Al acabar, una foto del libro cerrado ocupa su sitio y vuela hasta la
   // estantería o el logo.
   var RAIZ = (document.currentScript && document.currentScript.src || '').replace(/[^\/]*$/, '');
