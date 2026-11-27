@@ -308,6 +308,22 @@ main { position: relative; z-index: 1; }
 }
 @media (max-width: 900px) { .portada__interior { grid-template-columns: 1fr; } }
 
+/* Variante con fotografía de fondo (img/portada.webp): un velo claro a la
+   izquierda mantiene legible el texto y deja ver la sala a la derecha. */
+.portada--foto {
+  position: relative;
+  background:
+    linear-gradient(90deg, rgba(241, 243, 232, .96) 0%, rgba(241, 243, 232, .9) 38%, rgba(241, 243, 232, .45) 70%, rgba(241, 243, 232, .2) 100%),
+    url("img/portada.webp") center / cover no-repeat;
+}
+@media (max-width: 900px) {
+  .portada--foto {
+    background:
+      linear-gradient(180deg, rgba(241, 243, 232, .93) 0%, rgba(241, 243, 232, .86) 55%, rgba(241, 243, 232, .55) 100%),
+      url("img/portada-800.webp") 30% center / cover no-repeat;
+  }
+}
+
 .portada__acciones { display: flex; flex-wrap: wrap; gap: .8rem; margin-top: 1.8rem; }
 
 .cifras {
