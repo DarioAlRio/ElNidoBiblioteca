@@ -278,6 +278,24 @@ main { position: relative; z-index: 1; }
 .seccion--alt { background: var(--fondo-alt); border-block: 1px solid var(--borde); }
 .seccion__cabecera { max-width: 640px; margin-bottom: 2.5rem; }
 
+/* Cabecera de página con fotografía (p. ej. Actividades): la foto va en
+   --foto; el velo claro a la izquierda mantiene legible el texto. */
+.cabecera-foto {
+  padding: clamp(3.5rem, 9vw, 7rem) 0;
+  background:
+    linear-gradient(90deg, rgba(241, 243, 232, .97) 0%, rgba(241, 243, 232, .9) 40%, rgba(241, 243, 232, .3) 72%, rgba(241, 243, 232, .05) 100%),
+    var(--foto) 70% center / cover no-repeat;
+  border-bottom: 1px solid var(--borde);
+}
+.cabecera-foto .seccion__cabecera { margin-bottom: 0; }
+@media (max-width: 760px) {
+  .cabecera-foto {
+    background:
+      linear-gradient(180deg, rgba(241, 243, 232, .94) 0%, rgba(241, 243, 232, .85) 60%, rgba(241, 243, 232, .5) 100%),
+      var(--foto) 75% center / cover no-repeat;
+  }
+}
+
 .rejilla { display: grid; gap: 1.25rem; }
 .rejilla--2 { grid-template-columns: repeat(2, 1fr); }
 .rejilla--3 { grid-template-columns: repeat(3, 1fr); }
