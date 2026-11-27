@@ -214,6 +214,14 @@
 
     var TOTAL = 16;
     var indices = [];
+    // Estantería con foto: cada lomo es un recorte de la imagen (x0, x1, arriba)
+    // medido en píxeles sobre img/estanteria.webp (1792 × 592, base en y = 483).
+    var foto = caja.classList.contains('estanteria--foto');
+    var FW = 1792, FH = 592, BASE = 483;
+    var RECORTES = [[85, 187, 228], [187, 282, 70], [290, 385, 107], [390, 487, 145],
+      [493, 592, 183], [597, 695, 223], [695, 797, 65], [803, 900, 102],
+      [905, 1007, 140], [1012, 1117, 180], [1120, 1215, 220], [1218, 1316, 57],
+      [1318, 1416, 98], [1422, 1524, 138], [1527, 1630, 175], [1633, 1728, 153]];
     for (var i = 0; i < TOTAL; i++) {
       indices.push(Math.floor(Math.random() * libros.length));
       var b = document.createElement('button');
@@ -224,6 +232,15 @@
       b.setAttribute('aria-pressed', 'false');
       b.setAttribute('aria-label', 'Sacar un libro de la estantería, hueco ' + (i + 1));
       b.dataset.hueco = String(i);
+      if (foto) {
+        var r = RECORTES[i], w = r[1] - r[0], h = BASE - r[2];
+        b.style.left = (r[0] / FW * 100) + '%';
+        b.style.top = (r[2] / FH * 100) + '%';
+        b.style.width = (w / FW * 100) + '%';
+        b.style.height = (h / FH * 100) + '%';
+        b.style.backgroundSize = (FW / w * 100) + '% ' + (FH / h * 100) + '%';
+        b.style.backgroundPosition = (r[0] / (FW - w) * 100) + '% ' + (r[2] / (FH - h) * 100) + '%';
+      }
       lomos.appendChild(b);
     }
 

@@ -550,6 +550,35 @@ main { position: relative; z-index: 1; }
 .lomo:hover, .lomo:focus-visible { transform: translateY(-10px) rotate(-2deg); filter: brightness(1.1); }
 .lomo[aria-pressed="true"] { transform: translateY(-16px); filter: brightness(1.15); }
 
+/* Variante con fotografía: cada lomo es un recorte de img/estanteria.webp
+   colocado encima de su sitio (posiciones en script.js, RECORTES). El fondo
+   blanco de la pared se funde con la tarjeta gracias al modo «multiplicar». */
+.estanteria--foto .estanteria__lomos {
+  display: block;
+  position: relative;
+  height: auto;
+  aspect-ratio: 1792 / 592;
+  padding: 0;
+  margin: -.4rem -.6rem 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
+  background: url("img/estanteria.webp") center / 100% 100% no-repeat;
+  mix-blend-mode: multiply;
+}
+.estanteria--foto .lomo {
+  position: absolute;
+  flex: none;
+  border-radius: 2px 2px 0 0;
+  background: url("img/estanteria.webp") no-repeat;
+}
+.estanteria--foto .lomo::after { display: none; }
+.estanteria--foto .lomo:hover,
+.estanteria--foto .lomo:focus-visible { transform: translateY(-7%) rotate(-2deg); filter: brightness(1.08) drop-shadow(0 6px 5px rgba(0, 0, 0, .25)); }
+.estanteria--foto .lomo[aria-pressed="true"] { transform: translateY(-12%); filter: brightness(1.1) drop-shadow(0 8px 6px rgba(0, 0, 0, .28)); }
+.estanteria--foto .lomo:focus-visible { outline: 2px solid var(--acento); outline-offset: 2px; }
+
 .recomendacion {
   display: grid;
   grid-template-columns: auto 1fr;
