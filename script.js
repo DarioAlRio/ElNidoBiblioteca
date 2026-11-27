@@ -242,11 +242,19 @@
         b.style.backgroundPosition = (r[0] / (FW - w) * 100) + '% ' + (r[2] / (FH - h) * 100) + '%';
       }
       lomos.appendChild(b);
+      if (foto) {
+        // hueco oscuro que queda en la balda cuando el libro se levanta
+        var hueco = document.createElement('span');
+        hueco.className = 'lomo-hueco';
+        hueco.setAttribute('aria-hidden', 'true');
+        ['left', 'top', 'width', 'height'].forEach(function (p) { hueco.style[p] = b.style[p]; });
+        lomos.appendChild(hueco);
+      }
     }
 
     function mostrar(hueco) {
       var libro = libros[indices[hueco]];
-      Array.prototype.forEach.call(lomos.children, function (el) {
+      Array.prototype.forEach.call(lomos.querySelectorAll('.lomo'), function (el) {
         el.setAttribute('aria-pressed', el.dataset.hueco === String(hueco) ? 'true' : 'false');
       });
       var etiquetas = libro.g.map(function (t, i) {
