@@ -92,6 +92,14 @@ body::after {
   }
 }
 
+/* Variante con fotografía de fondo fija (p. ej. Catálogo): sustituye a los
+   árboles y la marca de agua; un velo claro mantiene legible el contenido. */
+body.fondo-foto::after {
+  background:
+    linear-gradient(rgba(241, 243, 232, .82), rgba(241, 243, 232, .82)),
+    var(--foto) center / cover no-repeat;
+}
+
 img { max-width: 100%; height: auto; display: block; }
 
 a { color: var(--acento-osc); text-underline-offset: .2em; }
