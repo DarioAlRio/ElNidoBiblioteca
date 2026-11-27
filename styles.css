@@ -715,10 +715,18 @@ main { position: relative; z-index: 1; }
   position: sticky;
   top: var(--alto-cabecera, 57px);
   z-index: 50;
-  background: var(--fondo);
-  border-bottom: 1px solid var(--borde);
-  padding: .6rem 0;
-  margin-bottom: 1.6rem;
+  padding: .7rem 0;
+  margin-bottom: 1.2rem;
+  /* Franja transparente: el buscador y las etiquetas flotan sobre la página.
+     Solo responden al ratón los propios controles, no el hueco entre ellos. */
+  pointer-events: none;
+}
+.buscador .buscador__fila,
+.buscador .filtros { pointer-events: auto; }
+.buscador .buscador__campo input,
+.buscador .filtros-toggle {
+  border-color: rgba(0, 0, 0, .08);
+  box-shadow: 0 6px 22px rgba(35, 40, 20, .16), 0 1px 3px rgba(35, 40, 20, .1);
 }
 /* Buscador y botón de etiquetas en una sola línea: la franja fija ocupa
    lo mínimo y las etiquetas solo aparecen al pedirlas. */
@@ -760,7 +768,11 @@ main { position: relative; z-index: 1; }
 .filtros[data-abierto="true"] {
   max-height: 45vh;
   overflow-y: auto;
-  padding-right: .2rem;
+  padding: .8rem .9rem;
+  background: rgba(255, 255, 255, .97);
+  border: 1px solid rgba(0, 0, 0, .06);
+  border-radius: var(--radio-g);
+  box-shadow: 0 10px 30px rgba(35, 40, 20, .18);
 }
 
 .filtros-toggle {
@@ -813,7 +825,7 @@ main { position: relative; z-index: 1; }
    en horizontal: abierto, el panel solo suma dos líneas y los libros siguen
    viéndose. El degradado del borde indica que hay más etiquetas. */
 @media (max-width: 860px) {
-  .filtros[data-abierto="true"] { max-height: none; overflow: visible; padding-right: 0; }
+  .filtros[data-abierto="true"] { max-height: none; overflow: visible; }
   .filtros__grupo { flex-wrap: nowrap; align-items: center; }
   .filtros__mas { margin-top: .4rem; }
   .filtros__titulo { font-size: .64rem; letter-spacing: .08em; margin-right: .2rem; }
