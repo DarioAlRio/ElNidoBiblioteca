@@ -302,11 +302,26 @@ main { position: relative; z-index: 1; }
   border-bottom: 1px solid var(--borde);
 }
 .cabecera-foto .seccion__cabecera { margin-bottom: 0; }
+/* Variante «alejada»: la foto entera a la altura de la franja, pegada a la
+   derecha; la imagen (…-alejada.webp) ya trae su borde izquierdo fundido
+   con el color del papel, así no se nota el corte a ningún ancho */
+.cabecera-foto--alejada {
+  background:
+    linear-gradient(90deg, #f1f3e8 0%, #f1f3e8 38%, rgba(241, 243, 232, .5) 50%, rgba(241, 243, 232, 0) 62%),
+    var(--foto) right center / auto 100% no-repeat,
+    #f1f3e8;
+}
 @media (max-width: 760px) {
   .cabecera-foto {
     background:
       linear-gradient(180deg, rgba(241, 243, 232, .94) 0%, rgba(241, 243, 232, .85) 60%, rgba(241, 243, 232, .5) 100%),
       var(--foto) 75% center / cover no-repeat;
+  }
+  .cabecera-foto--alejada {
+    background:
+      linear-gradient(180deg, rgba(241, 243, 232, .94) 0%, rgba(241, 243, 232, .85) 60%, rgba(241, 243, 232, .5) 100%),
+      var(--foto) right center / auto 100% no-repeat,
+      #f1f3e8;
   }
 }
 
