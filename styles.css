@@ -1070,8 +1070,7 @@ main { position: relative; z-index: 1; }
 
 /* 12. Intro de bienvenida (solo la primera visita) ---------------------
    El vídeo del libro (un pájaro se posa en el nido de la portada, el libro
-   se abre y se cierra) pasado a fotogramas que script.js pinta en un
-   <canvas>. Después una foto del libro cerrado vuela a la estantería.
+   se abre y se cierra), sin sonido. Después una foto del libro cerrado vuela a la estantería.
    La clase .con-intro la pone en <html> un script del <head> (ver
    iniciarIntro() en script.js). Fases (data-fase):
    entra → cierra → guarda → sale. */
@@ -1102,10 +1101,12 @@ html.intro-montada::before { display: none; }
   inset: 0;
   background: radial-gradient(ellipse at 50% 38%, #515e50 0%, #435043 45%, #2f392f 100%);
 }
-/* Los fotogramas; los bordes se funden con el fondo */
+/* El vídeo; los bordes se funden con el fondo */
 .intro__video {
   position: absolute;
   display: block;
+  object-fit: cover;
+  background: transparent;
   opacity: 0;
   transition: opacity .5s ease;
   -webkit-mask-image:

@@ -609,13 +609,11 @@
     window.addEventListener('pagehide', latido);
     document.addEventListener('visibilitychange', latido);
   }
-  // La intro es el vídeo del libro pasado a fotogramas (img/intro/000–108.webp,
-  // 960×540) que se pintan uno a uno en un <canvas>. Al acabar, una foto del
-  // libro cerrado ocupa su sitio y vuela hasta la estantería o el logo.
+  // La intro es un vídeo sin sonido del libro (img/intro/intro.mp4, 960×540).
+  // Al acabar, una foto del libro cerrado ocupa su sitio y vuela hasta la
+  // estantería o el logo.
   var RAIZ = (document.currentScript && document.currentScript.src || '').replace(/[^\/]*$/, '');
   var INTRO = {
-    fotogramas: 109,
-    fps: 14,
     ancho: 960,
     alto: 540,
     libro: { x: 343.5, y: 97.5, w: 273, h: 354 }   // libro cerrado en el último fotograma
@@ -628,18 +626,17 @@
     var intro = document.createElement('div');
     intro.className = 'intro';
     intro.innerHTML =
-      '<canvas class="intro__video" width="' + INTRO.ancho + '" height="' + INTRO.alto + '" aria-hidden="true"></canvas>' +
+      '<video class="intro__video" muted playsinline preload="auto" aria-hidden="true" ' +
+        'poster="' + RAIZ + 'img/intro/poster.webp" src="' + RAIZ + 'img/intro/intro.mp4"></video>' +
       '<div class="intro__mover" aria-hidden="true"><img src="' + RAIZ + 'img/intro/libro.webp" alt="" width="364" height="472"></div>' +
       '<button class="intro__saltar" type="button">Saltar animación</button>';
     document.body.insertBefore(intro, document.body.firstChild);
     html.classList.add('intro-montada');
 
     var lienzo = intro.querySelector('.intro__video');
-    var ctx = lienzo.getContext('2d');
     var libro = intro.querySelector('.intro__mover');
     var relojes = [];
     var terminado = false;
-    var bucle = 0;           // requestAnimationFrame de la reproducción
     var vuelo = null;        // animación del libro hacia su sitio
     var destino = null;      // lomo de la estantería o logo de la cabecera
     var desplazado = false;  // si hubo que bajar para ver la estantería
@@ -664,46 +661,21 @@
     medir();
     window.addEventListener('resize', medir);
 
-    // Carga de fotogramas: el primero se pinta en cuanto llega (el vídeo
-    // empieza quieto) y la reproducción arranca cuando están todos.
-    var imagenes = [];
-    var cargadas = 0;
-    var pintado = -1;
-    function pintar(i) {
-      var im = imagenes[i];
-      if (i === pintado || !im || !im.complete || !im.naturalWidth) return;
-      ctx.drawImage(im, 0, 0, INTRO.ancho, INTRO.alto);
-      pintado = i;
-    }
-    function alCargar() {
-      cargadas++;
-      if (this === imagenes[0]) { pintar(0); fase('entra'); }
-      if (cargadas === INTRO.fotogramas) reproducir();
-    }
-    for (var i = 0; i < INTRO.fotogramas; i++) {
-      var im = new Image();
-      im.decoding = 'async';
-      im.onload = im.onerror = alCargar;
-      im.src = RAIZ + 'img/intro/' + ('00' + i).slice(-3) + '.webp';
-      imagenes.push(im);
-    }
-    // Conexión lenta: si en 6 s no ha llegado todo, se entra a la web.
+    // Reproducción: sin sonido para que el navegador la deje arrancar sola.
+    // Si no puede (ahorro de batería en iPhone, conexión muy lenta), se
+    // entra directamente en la web.
+    lienzo.muted = true;
+    lienzo.addEventListener('loadeddata', function () { fase('entra'); }, { once: true });
+    lienzo.addEventListener('ended', function () {
+      cerrar();
+      despues(250, guardar);
+    }, { once: true });
+    lienzo.addEventListener('error', saltar);
     var espera = setTimeout(saltar, 6000);
     relojes.push(espera);
-
-    function reproducir() {
-      if (terminado) return;
-      clearTimeout(espera);
-      var inicio = performance.now();
-      var ultimo = INTRO.fotogramas - 1;
-      (function paso(ahora) {
-        var n = Math.max(0, Math.min(ultimo, Math.floor((ahora - inicio) / 1000 * INTRO.fps)));
-        pintar(n);
-        if (n < ultimo) { bucle = requestAnimationFrame(paso); return; }
-        cerrar();
-        despues(250, guardar);
-      })(inicio);
-    }
+    lienzo.addEventListener('playing', function () { clearTimeout(espera); }, { once: true });
+    var promesa = lienzo.play();
+    if (promesa && promesa.catch) promesa.catch(saltar);
 
     // Dónde se guarda el libro: un lomo de la estantería de la portada o,
     // en las demás páginas, el nido del logo de la cabecera.
@@ -781,10 +753,11 @@
       if (terminado) return;
       terminado = true;
       relojes.forEach(clearTimeout);
-      cancelAnimationFrame(bucle);
       document.removeEventListener('keydown', alTeclear);
       window.removeEventListener('resize', medir);
-      imagenes.forEach(function (im) { im.onload = im.onerror = null; });
+      lienzo.pause();
+      lienzo.removeAttribute('src');
+      lienzo.load();
       if (intro.parentNode) intro.parentNode.removeChild(intro);
       html.classList.remove('con-intro', 'intro-montada');
     }
@@ -792,7 +765,7 @@
       if (terminado) return;
       relojes.forEach(clearTimeout);
       relojes = [];
-      cancelAnimationFrame(bucle);
+      lienzo.pause();
       if (vuelo) { vuelo.onfinish = null; vuelo.cancel(); }
       if (destino) destino.style.visibility = '';
       if (desplazado) irA(0);
