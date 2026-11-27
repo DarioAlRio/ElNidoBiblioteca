@@ -616,14 +616,18 @@ main { position: relative; z-index: 1; }
   z-index: 2;
   background: none;
 }
+.estanteria--foto .lomo { pointer-events: none; }
+/* solo la silueta recortada responde al ratón: así la caja de un libro con
+   costado no «roba» el ratón al libro de al lado */
 .estanteria--foto .lomo__foto {
   position: absolute;
   inset: 0;
+  pointer-events: auto;
   background: url("img/estanteria.webp") no-repeat;
 }
 .estanteria--foto .lomo::after { display: none; }
 .estanteria--foto .lomo:hover,
-.estanteria--foto .lomo:focus-visible { transform: translateY(-7%) rotate(-2deg); filter: brightness(1.08) drop-shadow(0 6px 5px rgba(0, 0, 0, .25)); z-index: 3; }
+.estanteria--foto .lomo:focus-visible { transform: translateY(-7%); filter: brightness(1.08) drop-shadow(0 6px 5px rgba(0, 0, 0, .25)); z-index: 3; }
 .estanteria--foto .lomo[aria-pressed="true"] { transform: translateY(-12%); filter: brightness(1.1) drop-shadow(0 8px 6px rgba(0, 0, 0, .28)); z-index: 4; }
 .estanteria--foto .lomo-hueco {
   position: absolute;
@@ -641,6 +645,9 @@ main { position: relative; z-index: 1; }
 .estanteria--foto .lomo:hover + .lomo-hueco,
 .estanteria--foto .lomo:focus-visible + .lomo-hueco,
 .estanteria--foto .lomo[aria-pressed="true"] + .lomo-hueco { opacity: 1; }
+/* Al pasar por otro libro, el que estaba sacado vuelve a su sitio */
+.estanteria--foto .estanteria__lomos:has(.lomo:hover) .lomo[aria-pressed="true"]:not(:hover) { transform: none; filter: none; z-index: 2; }
+.estanteria--foto .estanteria__lomos:has(.lomo:hover) .lomo[aria-pressed="true"]:not(:hover) + .lomo-hueco { opacity: 0; }
 .estanteria--foto .lomo:focus-visible { outline: 2px solid var(--acento); outline-offset: 2px; }
 
 .recomendacion {
