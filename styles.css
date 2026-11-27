@@ -559,7 +559,7 @@ main { position: relative; z-index: 1; }
   height: auto;
   aspect-ratio: 1792 / 592;
   padding: 0;
-  margin: -.4rem -.6rem 0;
+  margin: .6rem -.6rem 0;
   border: 0;
   border-radius: 0;
   box-shadow: none;
@@ -572,6 +572,11 @@ main { position: relative; z-index: 1; }
   flex: none;
   border-radius: 2px 2px 0 0;
   z-index: 2;
+  background: none;
+}
+.estanteria--foto .lomo__foto {
+  position: absolute;
+  inset: 0;
   background: url("img/estanteria.webp") no-repeat;
 }
 .estanteria--foto .lomo::after { display: none; }

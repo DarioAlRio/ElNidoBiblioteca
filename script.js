@@ -214,14 +214,46 @@
 
     var TOTAL = 16;
     var indices = [];
-    // Estantería con foto: cada lomo es un recorte de la imagen (x0, x1, arriba)
-    // medido en píxeles sobre img/estanteria.webp (1792 × 592, base en y = 483).
+    // Estantería con foto: cada libro es un recorte de la imagen con la forma
+    // del libro entero (lomo + el costado que asoma por detrás), en píxeles
+    // sobre img/estanteria.webp (1792 × 592, base de la balda en y = 483).
     var foto = caja.classList.contains('estanteria--foto');
-    var FW = 1792, FH = 592, BASE = 483;
-    var RECORTES = [[85, 187, 228], [187, 282, 70], [290, 385, 107], [390, 487, 145],
-      [493, 592, 183], [597, 695, 223], [695, 797, 65], [803, 900, 102],
-      [905, 1007, 140], [1012, 1117, 180], [1120, 1215, 220], [1218, 1316, 57],
-      [1318, 1416, 98], [1422, 1524, 138], [1527, 1630, 175], [1633, 1728, 153]];
+    var FW = 1792, FH = 592, B = 483;
+    function rect(x0, x1, y) { return [[x0, y], [x1, y], [x1, B], [x0, B]]; }
+    var RECORTES = [
+      rect(85, 187, 228),
+      [[187, 70], [282, 72], [336, 93], [336, 107], [290, 107], [290, B], [187, B]],
+      [[290, 107], [385, 107], [422, 122], [422, 145], [390, 145], [390, B], [290, B]],
+      [[390, 145], [487, 145], [518, 158], [518, 183], [493, 183], [493, B], [390, B]],
+      [[493, 183], [592, 183], [615, 193], [615, 223], [597, 223], [597, B], [493, B]],
+      rect(597, 695, 223), rect(695, 800, 65), rect(803, 900, 102),
+      rect(905, 1007, 140), rect(1012, 1117, 180), rect(1120, 1215, 220),
+      [[1183, 80], [1218, 57], [1316, 57], [1316, B], [1218, B], [1218, 220], [1183, 220]],
+      rect(1318, 1416, 98), rect(1422, 1524, 138), rect(1527, 1630, 175),
+      [[1580, 167], [1633, 153], [1728, 153], [1728, B], [1633, B], [1633, 175], [1580, 175]]
+    ];
+    // Caja que envuelve el recorte, fondo alineado con la foto y silueta
+    function colocar(el, pts, conFondo) {
+      var xs = pts.map(function (p) { return p[0]; }), ys = pts.map(function (p) { return p[1]; });
+      var x0 = Math.min.apply(null, xs), x1 = Math.max.apply(null, xs);
+      var y0 = Math.min.apply(null, ys), y1 = Math.max.apply(null, ys);
+      var w = x1 - x0, h = y1 - y0;
+      el.style.left = (x0 / FW * 100) + '%';
+      el.style.top = (y0 / FH * 100) + '%';
+      el.style.width = (w / FW * 100) + '%';
+      el.style.height = (h / FH * 100) + '%';
+      // la silueta y la foto van en una capa interior para que la sombra
+      // (filter del botón) no quede recortada por el clip-path
+      var capa = conFondo ? el.appendChild(document.createElement('span')) : el;
+      if (conFondo) capa.className = 'lomo__foto';
+      capa.style.clipPath = 'polygon(' + pts.map(function (p) {
+        return ((p[0] - x0) / w * 100).toFixed(2) + '% ' + ((p[1] - y0) / h * 100).toFixed(2) + '%';
+      }).join(', ') + ')';
+      if (conFondo) {
+        capa.style.backgroundSize = (FW / w * 100) + '% ' + (FH / h * 100) + '%';
+        capa.style.backgroundPosition = (x0 / (FW - w) * 100) + '% ' + (y0 / (FH - h) * 100) + '%';
+      }
+    }
     for (var i = 0; i < TOTAL; i++) {
       indices.push(Math.floor(Math.random() * libros.length));
       var b = document.createElement('button');
@@ -233,13 +265,7 @@
       b.setAttribute('aria-label', 'Sacar un libro de la estantería, hueco ' + (i + 1));
       b.dataset.hueco = String(i);
       if (foto) {
-        var r = RECORTES[i], w = r[1] - r[0], h = BASE - r[2];
-        b.style.left = (r[0] / FW * 100) + '%';
-        b.style.top = (r[2] / FH * 100) + '%';
-        b.style.width = (w / FW * 100) + '%';
-        b.style.height = (h / FH * 100) + '%';
-        b.style.backgroundSize = (FW / w * 100) + '% ' + (FH / h * 100) + '%';
-        b.style.backgroundPosition = (r[0] / (FW - w) * 100) + '% ' + (r[2] / (FH - h) * 100) + '%';
+        colocar(b, RECORTES[i], true);
       }
       lomos.appendChild(b);
       if (foto) {
@@ -247,7 +273,7 @@
         var hueco = document.createElement('span');
         hueco.className = 'lomo-hueco';
         hueco.setAttribute('aria-hidden', 'true');
-        ['left', 'top', 'width', 'height'].forEach(function (p) { hueco.style[p] = b.style[p]; });
+        colocar(hueco, RECORTES[i], false);
         lomos.appendChild(hueco);
       }
     }
