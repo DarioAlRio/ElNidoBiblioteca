@@ -17,6 +17,7 @@
   function bloquearScroll() {
     if (bloqueos++ > 0) return;
     scrollGuardado = window.pageYOffset || document.documentElement.scrollTop;
+    if (window.lenis) window.lenis.stop();
     document.body.style.top = -scrollGuardado + 'px';
     document.body.classList.add('scroll-bloqueado');
   }
@@ -26,6 +27,45 @@
     document.body.classList.remove('scroll-bloqueado');
     document.body.style.top = '';
     window.scrollTo(0, scrollGuardado);
+    if (window.lenis) {
+      window.lenis.scrollTo(scrollGuardado, { immediate: true, force: true });
+      window.lenis.start();
+    }
+  }
+
+  // Salto instantáneo que también entiende el scroll suave
+  function irA(y) {
+    if (window.lenis) window.lenis.scrollTo(y, { immediate: true, force: true });
+    else window.scrollTo(0, y);
+  }
+
+  /* Scroll suave con inercia (Lenis, cargado desde jsDelivr). Solo la rueda
+     del ratón y el trackpad; en móvil el dedo sigue siendo el nativo. Se
+     desactiva si el sistema pide reducir animaciones. */
+  function iniciarScrollSuave() {
+    if (!window.Lenis || window.lenis ||
+        matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var lenis = window.lenis = new window.Lenis({
+      lerp: 0.09,
+      wheelMultiplier: 0.9,
+      prevent: function (n) { return n.closest && n.closest('.modal, .nav, .filtros, [data-lenis-prevent]'); }
+    });
+    function bucle(t) { lenis.raf(t); requestAnimationFrame(bucle); }
+    requestAnimationFrame(bucle);
+
+    // Enlaces a otra parte de la misma página: suave y sin quedar bajo la cabecera
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a[href*="#"]');
+      if (!a || a.origin !== location.origin || a.pathname !== location.pathname || !a.hash) return;
+      var destino = document.getElementById(decodeURIComponent(a.hash.slice(1)));
+      if (!destino) return;
+      e.preventDefault();
+      var cab = document.querySelector('.cabecera');
+      lenis.scrollTo(destino, { offset: -(cab ? cab.offsetHeight : 0), duration: 1.1 });
+      history.pushState(null, '', a.hash);
+      if (destino.tabIndex < 0 && !destino.hasAttribute('tabindex')) destino.setAttribute('tabindex', '-1');
+      destino.focus({ preventScroll: true });
+    });
   }
 
   /* Publica la altura real de la cabecera para lo que quede pegado debajo. */
@@ -635,7 +675,7 @@
         destino.style.visibility = 'hidden';
         var r = destino.getBoundingClientRect();
         if (r.top < 80 || r.bottom > window.innerHeight - 20) {
-          window.scrollTo(0, window.pageYOffset + r.top - (window.innerHeight - r.height) / 2);
+          irA(window.pageYOffset + r.top - (window.innerHeight - r.height) / 2);
           desplazado = true;
         }
       }
@@ -677,7 +717,10 @@
         fase('sale');
         despues(320, terminar);
         if (desplazado) {
-          setTimeout(function () { window.scrollTo({ top: 0, behavior: 'smooth' }); }, 1400);
+          setTimeout(function () {
+            if (window.lenis) window.lenis.scrollTo(0, { duration: 1.2 });
+            else window.scrollTo({ top: 0, behavior: 'smooth' });
+          }, 1400);
         }
       };
     }
@@ -695,7 +738,7 @@
       relojes = [];
       if (vuelo) { vuelo.onfinish = null; vuelo.cancel(); }
       if (destino) destino.style.visibility = '';
-      if (desplazado) window.scrollTo(0, 0);
+      if (desplazado) irA(0);
       intro.classList.add('intro--rapida');
       fase('sale');
       despues(400, terminar);
@@ -717,6 +760,7 @@
 
   /* Arranque -------------------------------------------------------------- */
   function iniciar() {
+    iniciarScrollSuave();
     iniciarIntro();
     latirIntro();
     medirCabecera();
