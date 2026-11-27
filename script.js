@@ -234,6 +234,42 @@
     ];
     // Color medio del costado de los libros que lo enseñan (por hueco)
     var COSTADOS = { 1: '#6a5a52', 2: '#545850', 3: '#765f50', 4: '#54443b', 11: '#a07e65', 15: '#676852' };
+    var SOMBRAS = {
+      1: ['#827171', '#7b716f', '#786e6c', '#746662'], 2: ['#60615b', '#575b54', '#595b54', '#52524a'],
+      3: ['#7b6155', '#776152', '#766050', '#715949'], 4: ['#5a483f', '#56473f', '#57463f', '#6d605c'],
+      11: ['#9b7f69', '#9d7e67', '#a68368', '#bd8c60'], 15: ['#61614f', '#61634f', '#696d57', '#788869']
+    };
+    // Borde superior del costado [x, y] → [x, y] y dónde lo tapa el vecino
+    var CANTOS = {
+      1: [[282, 72], [336, 93], 107], 2: [[385, 107], [422, 122], 145],
+      3: [[487, 145], [518, 158], 183], 4: [[592, 183], [615, 193], 223],
+      11: [[1183, 80], [1218, 57], 220], 15: [[1580, 167], [1633, 153], 175]
+    };
+    // Al levantarse, el costado se alarga hacia abajo (lo que estaba tapado
+    // por el libro de al lado) para que el libro tenga cuerpo y no parezca
+    // una lámina. Va dentro del botón, por debajo de la foto.
+    function ponerCostado(b, i) {
+      var c = CANTOS[i]; if (!c) return;
+      var pts = RECORTES[i];
+      var xs = pts.map(function (p) { return p[0]; }), ys = pts.map(function (p) { return p[1]; });
+      var x0 = Math.min.apply(null, xs), w = Math.max.apply(null, xs) - x0;
+      var y0 = Math.min.apply(null, ys), h = Math.max.apply(null, ys) - y0;
+      var fondo = Math.min(B, c[2] + h * 0.16);
+      var poli = [c[0], c[1], [c[1][0], fondo], [c[0][0], fondo]];
+      var el = document.createElement('span');
+      el.className = 'lomo__costado';
+      // sombreado del costado (muestreado de la foto), de lado a lado
+      var sx0 = Math.min(c[0][0], c[1][0]), sx1 = Math.max(c[0][0], c[1][0]);
+      var sw = (sx1 - sx0) / w * 100, sl = (sx0 - x0) / w * 100;
+      el.style.backgroundImage = 'linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, .22)), ' +
+        'linear-gradient(to right, ' + SOMBRAS[i].join(', ') + ')';
+      el.style.backgroundSize = '100% 100%, ' + sw + '% 100%';
+      el.style.backgroundPosition = '0 0, ' + (sw >= 100 ? 0 : sl / (100 - sw) * 100) + '% 0';
+      el.style.clipPath = 'polygon(' + poli.map(function (p) {
+        return ((p[0] - x0) / w * 100).toFixed(2) + '% ' + ((p[1] - y0) / h * 100).toFixed(2) + '%';
+      }).join(', ') + ')';
+      b.insertBefore(el, b.firstChild);
+    }
     // Caja que envuelve el recorte, fondo alineado con la foto y silueta
     function colocar(el, pts, conFondo) {
       var xs = pts.map(function (p) { return p[0]; }), ys = pts.map(function (p) { return p[1]; });
@@ -277,6 +313,7 @@
       b.dataset.hueco = String(i);
       if (foto) {
         colocar(b, RECORTES[i], true);
+        ponerCostado(b, i);
       }
       lomos.appendChild(b);
       if (foto) {

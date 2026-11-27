@@ -626,6 +626,16 @@ main { position: relative; z-index: 1; }
   background: url("img/estanteria.webp") no-repeat;
 }
 .estanteria--foto .lomo::after { display: none; }
+.estanteria--foto .lomo__costado {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity .15s ease;
+  background-repeat: no-repeat;
+}
+.estanteria--foto .lomo:hover .lomo__costado,
+.estanteria--foto .lomo:focus-visible .lomo__costado,
+.estanteria--foto .lomo[aria-pressed="true"] .lomo__costado { opacity: 1; }
 .estanteria--foto .lomo:hover,
 .estanteria--foto .lomo:focus-visible { transform: translateY(-7%); filter: brightness(1.08) drop-shadow(0 6px 5px rgba(0, 0, 0, .25)); z-index: 3; }
 .estanteria--foto .lomo[aria-pressed="true"] { transform: translateY(-12%); filter: brightness(1.1) drop-shadow(0 8px 6px rgba(0, 0, 0, .28)); z-index: 4; }
@@ -648,6 +658,7 @@ main { position: relative; z-index: 1; }
 /* Al pasar por otro libro, el que estaba sacado vuelve a su sitio */
 .estanteria--foto .estanteria__lomos:has(.lomo:hover) .lomo[aria-pressed="true"]:not(:hover) { transform: none; filter: none; z-index: 2; }
 .estanteria--foto .estanteria__lomos:has(.lomo:hover) .lomo[aria-pressed="true"]:not(:hover) + .lomo-hueco { opacity: 0; }
+.estanteria--foto .estanteria__lomos:has(.lomo:hover) .lomo[aria-pressed="true"]:not(:hover) .lomo__costado { opacity: 0; }
 .estanteria--foto .lomo:focus-visible { outline: 2px solid var(--acento); outline-offset: 2px; }
 
 .recomendacion {
