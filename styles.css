@@ -103,7 +103,7 @@ body::after {
    árboles y la marca de agua; un velo claro mantiene legible el contenido. */
 body.fondo-foto::after {
   background:
-    linear-gradient(rgba(241, 243, 232, .82), rgba(241, 243, 232, .82)),
+    linear-gradient(rgba(241, 243, 232, .6), rgba(241, 243, 232, .6)),
     var(--foto) center / cover no-repeat;
 }
 
