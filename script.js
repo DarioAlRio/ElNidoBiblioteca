@@ -609,24 +609,17 @@
     window.addEventListener('pagehide', latido);
     document.addEventListener('visibilitychange', latido);
   }
-  var PAJARO_SVG =
-    '<svg viewBox="0 0 64 52" aria-hidden="true" focusable="false">' +
-      '<path class="pajaro__ala-lejos" d="M22 27 Q30 15 40 24 Q32 29 22 27Z" fill="#46502a"/>' +
-      '<path d="M14 30 L1 24 L4 31 L2 37 Z" fill="#4e3a30"/>' +
-      '<ellipse cx="28" cy="32" rx="17" ry="12" fill="#7a5540"/>' +
-      '<ellipse cx="33" cy="37" rx="11" ry="6.5" fill="#efdfc2"/>' +
-      '<path d="M30 35 Q36 30 42 33 Q37 40 30 35Z" fill="#8d63c4" opacity=".85"/>' +
-      '<g class="pajaro__cabeza">' +
-        '<circle cx="44" cy="22" r="9" fill="#7a5540"/>' +
-        '<circle cx="47" cy="20" r="1.9" fill="#1d1a16"/>' +
-        '<circle cx="47.6" cy="19.4" r=".6" fill="#fff"/>' +
-        '<path d="M52 20.5 L60 23.5 L52 26 Z" fill="#e0a030"/>' +
-      '</g>' +
-      '<path class="pajaro__ala" d="M16 29 Q28 18 40 27 Q31 39 16 33Z" fill="#6b7a3a"/>' +
-      '<g class="pajaro__patas" stroke="#b07a3a" stroke-width="1.6" stroke-linecap="round">' +
-        '<path d="M26 43 L25 50 M23 50 L28 50"/><path d="M33 43 L34 50 M32 50 L37 50"/>' +
-      '</g>' +
-    '</svg>';
+  // La intro es el vídeo del libro pasado a fotogramas (img/intro/000–108.webp,
+  // 960×540) que se pintan uno a uno en un <canvas>. Al acabar, una foto del
+  // libro cerrado ocupa su sitio y vuela hasta la estantería o el logo.
+  var RAIZ = (document.currentScript && document.currentScript.src || '').replace(/[^\/]*$/, '');
+  var INTRO = {
+    fotogramas: 109,
+    fps: 14,
+    ancho: 960,
+    alto: 540,
+    libro: { x: 343.5, y: 97.5, w: 273, h: 354 }   // libro cerrado en el último fotograma
+  };
 
   function iniciarIntro() {
     var html = document.documentElement;
@@ -635,32 +628,82 @@
     var intro = document.createElement('div');
     intro.className = 'intro';
     intro.innerHTML =
-      '<div class="intro__escena" aria-hidden="true"><div class="intro__mover"><div class="intro__libro">' +
-        '<div class="intro__paginas">' +
-          '<p class="intro__paginas-titulo">Bienvenida<br>al nido</p>' +
-          '<span class="intro__paginas-adorno"></span>' +
-          '<p class="intro__paginas-texto">Pasa, coge un libro<br>y quédate a leer.</p>' +
-        '</div>' +
-        '<div class="intro__tapa">' +
-          '<div class="intro__tapa-frente">' +
-            '<img class="intro__nido" src="icon-512.png" alt="" width="512" height="512">' +
-            '<p class="intro__titulo"><strong>El Nido</strong><span>Biblioteca vecinal</span></p>' +
-          '</div>' +
-          '<div class="intro__tapa-dorso"></div>' +
-        '</div>' +
-        '<div class="intro__pajaro">' + PAJARO_SVG + '</div>' +
-      '</div></div></div>' +
+      '<canvas class="intro__video" width="' + INTRO.ancho + '" height="' + INTRO.alto + '" aria-hidden="true"></canvas>' +
+      '<div class="intro__mover" aria-hidden="true"><img src="' + RAIZ + 'img/intro/libro.webp" alt="" width="364" height="472"></div>' +
       '<button class="intro__saltar" type="button">Saltar animación</button>';
     document.body.insertBefore(intro, document.body.firstChild);
     html.classList.add('intro-montada');
 
+    var lienzo = intro.querySelector('.intro__video');
+    var ctx = lienzo.getContext('2d');
+    var libro = intro.querySelector('.intro__mover');
     var relojes = [];
     var terminado = false;
+    var bucle = 0;           // requestAnimationFrame de la reproducción
     var vuelo = null;        // animación del libro hacia su sitio
     var destino = null;      // lomo de la estantería o logo de la cabecera
     var desplazado = false;  // si hubo que bajar para ver la estantería
     function fase(nombre) { intro.setAttribute('data-fase', nombre); }
     function despues(ms, fn) { relojes.push(setTimeout(fn, ms)); }
+
+    // Tamaño: llena la pantalla en horizontal; en móvil se encoge lo justo
+    // para que el libro abierto quepa a lo ancho (los bordes se funden con el fondo).
+    function medir() {
+      var vw = window.innerWidth, vh = window.innerHeight;
+      var cabe = Math.min(vw / INTRO.ancho, vh / INTRO.alto);
+      var cubre = Math.max(vw / INTRO.ancho, vh / INTRO.alto);
+      var s = Math.max(cabe, Math.min(cubre, vw / 470));
+      var w = INTRO.ancho * s, h = INTRO.alto * s;
+      var x = (vw - w) / 2, y = (vh - h) / 2;
+      lienzo.style.cssText = 'width:' + w + 'px;height:' + h + 'px;left:' + x + 'px;top:' + y + 'px';
+      libro.style.left = x + INTRO.libro.x * s + 'px';
+      libro.style.top = y + INTRO.libro.y * s + 'px';
+      libro.style.width = INTRO.libro.w * s + 'px';
+      libro.style.height = INTRO.libro.h * s + 'px';
+    }
+    medir();
+    window.addEventListener('resize', medir);
+
+    // Carga de fotogramas: el primero se pinta en cuanto llega (el vídeo
+    // empieza quieto) y la reproducción arranca cuando están todos.
+    var imagenes = [];
+    var cargadas = 0;
+    var pintado = -1;
+    function pintar(i) {
+      var im = imagenes[i];
+      if (i === pintado || !im || !im.complete || !im.naturalWidth) return;
+      ctx.drawImage(im, 0, 0, INTRO.ancho, INTRO.alto);
+      pintado = i;
+    }
+    function alCargar() {
+      cargadas++;
+      if (this === imagenes[0]) { pintar(0); fase('entra'); }
+      if (cargadas === INTRO.fotogramas) reproducir();
+    }
+    for (var i = 0; i < INTRO.fotogramas; i++) {
+      var im = new Image();
+      im.decoding = 'async';
+      im.onload = im.onerror = alCargar;
+      im.src = RAIZ + 'img/intro/' + ('00' + i).slice(-3) + '.webp';
+      imagenes.push(im);
+    }
+    // Conexión lenta: si en 6 s no ha llegado todo, se entra a la web.
+    var espera = setTimeout(saltar, 6000);
+    relojes.push(espera);
+
+    function reproducir() {
+      if (terminado) return;
+      clearTimeout(espera);
+      var inicio = performance.now();
+      var ultimo = INTRO.fotogramas - 1;
+      (function paso(ahora) {
+        var n = Math.max(0, Math.min(ultimo, Math.floor((ahora - inicio) / 1000 * INTRO.fps)));
+        pintar(n);
+        if (n < ultimo) { bucle = requestAnimationFrame(paso); return; }
+        cerrar();
+        despues(250, guardar);
+      })(inicio);
+    }
 
     // Dónde se guarda el libro: un lomo de la estantería de la portada o,
     // en las demás páginas, el nido del logo de la cabecera.
@@ -674,8 +717,8 @@
       return document.querySelector('.marca__icono');
     }
 
-    // El libro se cierra; mientras, con el fondo aún opaco, se prepara el
-    // hueco en la estantería y se baja hasta ella si no se ve.
+    // Con el fondo aún opaco, la foto del libro sustituye al vídeo, se
+    // prepara el hueco en la estantería y se baja hasta ella si no se ve.
     function cerrar() {
       fase('cierra');
       destino = elegirDestino();
@@ -694,9 +737,8 @@
     // Vuela hasta el destino encogiéndose; en la estantería acaba con la
     // forma exacta del lomo.
     function guardar() {
-      if (!destino || !intro.animate) { fase('sale'); despues(350, terminar); return; }
+      if (!destino || !libro.animate) { fase('sale'); despues(350, terminar); return; }
       fase('guarda');
-      var libro = intro.querySelector('.intro__mover');
       var a = libro.getBoundingClientRect();
       var b = destino.getBoundingClientRect();
       var sx, sy, x, y;
@@ -739,13 +781,18 @@
       if (terminado) return;
       terminado = true;
       relojes.forEach(clearTimeout);
+      cancelAnimationFrame(bucle);
       document.removeEventListener('keydown', alTeclear);
+      window.removeEventListener('resize', medir);
+      imagenes.forEach(function (im) { im.onload = im.onerror = null; });
       if (intro.parentNode) intro.parentNode.removeChild(intro);
       html.classList.remove('con-intro', 'intro-montada');
     }
     function saltar() {
+      if (terminado) return;
       relojes.forEach(clearTimeout);
       relojes = [];
+      cancelAnimationFrame(bucle);
       if (vuelo) { vuelo.onfinish = null; vuelo.cancel(); }
       if (destino) destino.style.visibility = '';
       if (desplazado) irA(0);
@@ -757,15 +804,6 @@
 
     intro.querySelector('.intro__saltar').addEventListener('click', saltar);
     document.addEventListener('keydown', alTeclear);
-
-    // Guion: libro (0 s) → vuelo del pájaro (0,7) → se posa (3) → se abre (4,1)
-    //        → se cierra (5,9) → vuela a la estantería (7,05) → web (~8,5 s)
-    requestAnimationFrame(function () { fase('entra'); });
-    despues(700, function () { fase('vuela'); });
-    despues(3000, function () { fase('posado'); });
-    despues(4100, function () { fase('abre'); });
-    despues(5900, cerrar);
-    despues(7050, guardar);
   }
 
   /* Arranque -------------------------------------------------------------- */
