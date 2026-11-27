@@ -245,22 +245,22 @@
       3: [[487, 145], [518, 158], 183], 4: [[592, 183], [615, 193], 223],
       11: [[1183, 80], [1218, 57], 220], 15: [[1580, 167], [1633, 153], 175]
     };
-    // Cuerpo del libro: al levantarse, el costado queda «colgando»; para que
-    // el libro tenga cuerpo se pinta el costado completo detrás de los libros
-    // vecinos (capa quieta, por debajo de ellos), desde donde queda el filo
-    // del libro levantado hasta abajo. Uno para el ratón encima (sube un 7 %)
-    // y otro para el libro sacado (12 %).
-    function ponerCuerpo(i, subida) {
+    // Cuerpo del libro: al levantarse, el costado se pinta completo en una
+    // capa por detrás de los libros vecinos que sube a la vez que el libro
+    // (misma transición), así lateral y frente suben juntos.
+    function ponerCuerpo(i) {
       var c = CANTOS[i]; if (!c) return;
-      var pts = RECORTES[i];
-      var ys = pts.map(function (p) { return p[1]; });
-      var d = (Math.max.apply(null, ys) - Math.min.apply(null, ys)) * subida;
-      var sx0 = Math.min(c[0][0], c[1][0]), sx1 = Math.max(c[0][0], c[1][0]);
-      var poli = [[c[0][0], c[0][1] - d], [c[1][0], c[1][1] - d], [c[1][0], c[2] + 2], [c[0][0], c[2] + 2]];
+      var ys = RECORTES[i].map(function (p) { return p[1]; });
+      var hb = Math.max.apply(null, ys) - Math.min.apply(null, ys);
+      var dmax = hb * 0.12;
+      var poli = [c[0], c[1], [c[1][0], c[2] + dmax + 2], [c[0][0], c[2] + dmax + 2]];
       var el = document.createElement('span');
       el.className = 'lomo-cuerpo';
       el.setAttribute('aria-hidden', 'true');
       colocar(el, poli, false);
+      var hc = c[2] + dmax + 2 - Math.min(c[0][1], c[1][1]);
+      el.style.setProperty('--sube', (-hb * 0.07 / hc * 100) + '%');
+      el.style.setProperty('--sube-mas', (-hb * 0.12 / hc * 100) + '%');
       el.style.backgroundImage = 'linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, .2)), ' +
         'linear-gradient(to right, ' + SOMBRAS[i].join(', ') + ')';
       el.style.backgroundSize = '100% 100%, 100% 100%';
@@ -320,8 +320,7 @@
         colocar(hueco, RECORTES[i], false);
         if (COSTADOS[i]) hueco.style.backgroundColor = COSTADOS[i];
         lomos.appendChild(hueco);
-        ponerCuerpo(i, 0.07);
-        ponerCuerpo(i, 0.12);
+        ponerCuerpo(i);
       }
     }
 
