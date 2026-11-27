@@ -232,6 +232,8 @@
       rect(1318, 1416, 98), rect(1422, 1524, 138), rect(1527, 1630, 175),
       [[1580, 167], [1633, 153], [1728, 153], [1728, B], [1633, B], [1633, 175], [1580, 175]]
     ];
+    // Color medio del costado de los libros que lo enseñan (por hueco)
+    var COSTADOS = { 1: '#6a5a52', 2: '#545850', 3: '#765f50', 4: '#54443b', 11: '#a07e65', 15: '#676852' };
     // Caja que envuelve el recorte, fondo alineado con la foto y silueta
     function colocar(el, pts, conFondo) {
       var xs = pts.map(function (p) { return p[0]; }), ys = pts.map(function (p) { return p[1]; });
@@ -252,6 +254,15 @@
       if (conFondo) {
         capa.style.backgroundSize = (FW / w * 100) + '% ' + (FH / h * 100) + '%';
         capa.style.backgroundPosition = (x0 / (FW - w) * 100) + '% ' + (y0 / (FH - h) * 100) + '%';
+      } else {
+        // El hueco es oscuro donde estaba el lomo (entre los libros); donde
+        // asomaba el costado se pinta del color del costado, para que al
+        // levantarse parezca que este sigue por detrás del libro vecino.
+        var abajo = pts.filter(function (p) { return p[1] === B; }).map(function (p) { return p[0]; });
+        var l0 = Math.min.apply(null, abajo), l1 = Math.max.apply(null, abajo);
+        var hw = (l1 - l0) / w * 100, hl = (l0 - x0) / w * 100;
+        el.style.backgroundPosition = (hw >= 100 ? 0 : hl / (100 - hw) * 100) + '% 0';
+        el.style.backgroundSize = hw + '% 100%';
       }
     }
     for (var i = 0; i < TOTAL; i++) {
@@ -274,6 +285,7 @@
         hueco.className = 'lomo-hueco';
         hueco.setAttribute('aria-hidden', 'true');
         colocar(hueco, RECORTES[i], false);
+        if (COSTADOS[i]) hueco.style.backgroundColor = COSTADOS[i];
         lomos.appendChild(hueco);
       }
     }
