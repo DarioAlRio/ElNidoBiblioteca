@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Referencias para IA | Biblioteca El Nido</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png?v=3">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { background: #f4efe4; margin: 0; }
+  body::before, body::after { display: none !important; }
+  .ref--abierto .intro__mover { transform: translateX(50%) scale(.62) !important; }
+  .ref-cab { max-width: 1100px; margin: 0 auto; padding: 24px 16px 0; font-family: var(--serif); color: #2c3320; }
+  .ref-cab p { font-family: system-ui, sans-serif; font-size: .95rem; max-width: 70ch; }
+  .ref-rejilla { max-width: 1100px; margin: 0 auto; padding: 16px; display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+  .ref-panel { margin: 0; }
+  .ref-panel figcaption { font: 600 .95rem system-ui, sans-serif; color: #2c3320; padding: 8px 2px 0; }
+  .ref-panel figcaption small { display: block; font-weight: 400; color: #5a5a50; }
+
+  /* La escena de la intro, congelada y sin animaciones */
+  .ref *, .ref *::before, .ref *::after { animation: none !important; transition: none !important; }
+  .ref.intro { position: relative; inset: auto; z-index: auto; height: 520px; border-radius: 12px; }
+  .ref--claro.intro::before { background: #fff; }
+  .ref--cuadros.intro::before { background: repeating-conic-gradient(#e6e6e6 0 25%, #fff 0 50%) 0 0 / 24px 24px; }
+  .ref .intro__libro { opacity: 1; width: 300px; }
+  .ref .intro__pajaro { opacity: 1; }
+  .ref .pajaro__patas { opacity: 1; }
+  .ref--sin-pajaro .intro__pajaro { display: none; }
+  .ref--abierto .intro__tapa { transform: rotateY(-178deg); }
+  .ref--abierto .intro__mover { transform: translateX(50%); }
+  .ref--abierto .intro__pajaro { display: none; }
+  .ref--solo-pajaro .intro__libro { width: 300px; }
+  .ref--solo-pajaro .intro__paginas, .ref--solo-pajaro .intro__tapa { display: none; }
+  .ref--solo-pajaro .intro__pajaro { left: 50%; top: 75%; width: 90%; margin-left: -45%; }
+  .ref--interior .intro__tapa, .ref--interior .intro__pajaro { display: none; }
+
+  /* ?p=N: muestra solo un panel a pantalla completa (para exportar PNG) */
+  body.ref-solo .ref-cab { display: none; }
+  body.ref-solo .ref-rejilla { display: block; max-width: none; padding: 0; }
+  body.ref-solo .ref-panel { display: none; }
+  body.ref-solo .ref-panel.activo { display: block; }
+  body.ref-solo .ref-panel.activo figcaption { display: none; }
+  body.ref-solo .ref.intro { height: 100vh; border-radius: 0; }
+  body.ref-solo .ref .intro__libro { width: min(560px, 70vw, 62vh); }
+</style>
+</head>
+<body>
+<div class="ref-cab">
+  <h1>Referencias para generar imágenes con IA</h1>
+  <p>El libro de la animación inicial, congelado en cada estado. Haz captura del que necesites. Proporción del libro: 3 de ancho por 4,1 de alto. Para la animación, el pájaro, la tapa y las páginas interiores tienen que ir en imágenes separadas (el pájaro con fondo transparente).</p>
+</div>
+<div class="ref-rejilla">
+  <figure class="ref-panel"><div class="intro ref" data-x></div><figcaption>1 · Libro cerrado con el pájaro posado<small>El momento principal de la intro</small></figcaption></figure>
+  <figure class="ref-panel"><div class="intro ref ref--sin-pajaro" data-x></div><figcaption>2 · Tapa sola (sin pájaro)<small>Para generar la portada del libro</small></figcaption></figure>
+  <figure class="ref-panel"><div class="intro ref ref--abierto" data-x></div><figcaption>3 · Libro abierto<small>Tapa girada y páginas interiores</small></figcaption></figure>
+  <figure class="ref-panel"><div class="intro ref ref--claro ref--interior" data-x></div><figcaption>4 · Páginas interiores<small>«Bienvenida al nido»</small></figcaption></figure>
+  <figure class="ref-panel"><div class="intro ref ref--cuadros ref--solo-pajaro" data-x></div><figcaption>5 · Pájaro posado<small>Debe ir con fondo transparente</small></figcaption></figure>
+  <figure class="ref-panel"><div class="intro ref ref--claro ref--sin-pajaro" data-x></div><figcaption>6 · Tapa sobre fondo blanco<small>Más fácil de recortar</small></figcaption></figure>
+</div>
+<script>
+(function () {
+  var PAJARO = '<svg viewBox="0 0 64 52" aria-hidden="true" focusable="false"><path class="pajaro__ala-lejos" d="M22 27 Q30 15 40 24 Q32 29 22 27Z" fill="#46502a"/><path d="M14 30 L1 24 L4 31 L2 37 Z" fill="#4e3a30"/><ellipse cx="28" cy="32" rx="17" ry="12" fill="#7a5540"/><ellipse cx="33" cy="37" rx="11" ry="6.5" fill="#efdfc2"/><path d="M30 35 Q36 30 42 33 Q37 40 30 35Z" fill="#8d63c4" opacity=".85"/><g class="pajaro__cabeza"><circle cx="44" cy="22" r="9" fill="#7a5540"/><circle cx="47" cy="20" r="1.9" fill="#1d1a16"/><circle cx="47.6" cy="19.4" r=".6" fill="#fff"/><path d="M52 20.5 L60 23.5 L52 26 Z" fill="#e0a030"/></g><path class="pajaro__ala" d="M16 29 Q28 18 40 27 Q31 39 16 33Z" fill="#6b7a3a"/><g class="pajaro__patas" stroke="#b07a3a" stroke-width="1.6" stroke-linecap="round"><path d="M26 43 L25 50 M23 50 L28 50"/><path d="M33 43 L34 50 M32 50 L37 50"/></g></svg>';
+  var LIBRO =
+    '<div class="intro__escena" aria-hidden="true"><div class="intro__mover"><div class="intro__libro">' +
+      '<div class="intro__paginas"><p class="intro__paginas-titulo">Bienvenida<br>al nido</p>' +
+      '<span class="intro__paginas-adorno"></span><p class="intro__paginas-texto">Pasa, coge un libro<br>y quédate a leer.</p></div>' +
+      '<div class="intro__tapa"><div class="intro__tapa-frente"><img class="intro__nido" src="../icon-512.png" alt="" width="512" height="512">' +
+      '<p class="intro__titulo"><strong>El Nido</strong><span>Biblioteca vecinal</span></p></div><div class="intro__tapa-dorso"></div></div>' +
+      '<div class="intro__pajaro">' + PAJARO + '</div>' +
+    '</div></div></div>';
+  document.querySelectorAll('[data-x]').forEach(function (e) { e.innerHTML = LIBRO; });
+  var p = +new URLSearchParams(location.search).get('p');
+  var paneles = document.querySelectorAll('.ref-panel');
+  if (p && paneles[p - 1]) { document.body.classList.add('ref-solo'); paneles[p - 1].classList.add('activo'); }
+})();
+</script>
+</body>
+</html>
