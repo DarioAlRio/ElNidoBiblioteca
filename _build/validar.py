@@ -13,7 +13,9 @@ def leer(ruta):
         return f.read()
 
 
-docs = {os.path.basename(p): leer(p) for p in paginas}
+todos = {os.path.basename(p): leer(p) for p in paginas}
+# 404.html usa rutas desde la raiz y no lleva canonical: solo se le revisan los enlaces
+docs = {k: v for k, v in todos.items() if k != '404.html'}
 
 # --- 1. JSON-LD: un bloque bien formado, sin aperturas/cierres duplicados
 for nombre, html in docs.items():
@@ -80,11 +82,11 @@ for etiqueta, patron in [('title', r'<title>(.*?)</title>'),
             fallos.append('%s: canonical apunta a %s' % (nombre, can[0]))
 
 # --- 5. Enlaces internos que apuntan a archivos existentes
-for nombre, html in docs.items():
+for nombre, html in todos.items():
     for href in set(re.findall(r'(?:href|src)="([^"#:]+?)(?:#[^"]*)?"', html)):
         if href.startswith(('http', 'mailto', 'tel', '//')) or not href:
             continue
-        href = href.split('?')[0]          # descartar la versión de caché (?v=2)
+        href = href.split('?')[0].lstrip('/') or ('index.html' if href.startswith('/') else '')  # versión de caché y rutas desde la raíz
         if not href:
             continue
         if not os.path.exists(os.path.join(ROOT, href.replace('/', os.sep))):

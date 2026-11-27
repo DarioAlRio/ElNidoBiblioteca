@@ -128,6 +128,16 @@
     });
   }
 
+  /* Icono de libro (trazo estilo Lucide) con el color de su público */
+  var ICONO_LIBRO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" ' +
+    'stroke-linecap="round" stroke-linejoin="round" focusable="false">' +
+    '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>';
+  function iconoLibro(libro, clase) {
+    var p = (libro.g[0] || '').toLowerCase();
+    var tono = p === 'infantil' ? 'infantil' : p === 'juvenil' ? 'juvenil' : 'adultos';
+    return '<span class="' + clase + ' icono-libro icono-libro--' + tono + '" aria-hidden="true">' + ICONO_LIBRO + '</span>';
+  }
+
   /* 4. Modal genérico ---------------------------------------------------- */
   var modal, modalCuerpo, modalCerrar, ultimoFoco;
 
@@ -225,7 +235,7 @@
 
     return '<p class="antetitulo" style="margin-bottom:.2rem">' + escapar(libro.g[0]) + '</p>' +
       '<h2 id="modal-titulo" style="font-size:1.5rem;margin-bottom:.3rem">' +
-      '<span aria-hidden="true">' + libro.e + '</span> ' + escapar(libro.t) + '</h2>' +
+      escapar(libro.t) + '</h2>' +
       '<p style="color:var(--texto-suave)">' + escapar(libro.d) + '</p>' +
       '<div class="libro__etiquetas" style="margin-bottom:1rem">' + etiquetas + '</div>' +
       (filas ? '<dl class="datos-lista">' + filas + '</dl>' : '') +
@@ -374,7 +384,7 @@
           escapar(t) + '</span>';
       }).join(' ');
       panel.innerHTML =
-        '<div class="recomendacion__emoji" aria-hidden="true">' + libro.e + '</div>' +
+        iconoLibro(libro, 'recomendacion__emoji') +
         '<div>' +
         '<p class="recomendacion__titulo">' + escapar(libro.t) + '</p>' +
         (libro.a ? '<p class="recomendacion__autor">' + escapar(libro.a) + '</p>' : '') +
@@ -474,7 +484,7 @@
           escapar(t) + '</span>';
       }).join(' ');
       return '<li><button type="button" class="libro" data-id="' + libro._n + '">' +
-        '<span class="libro__emoji" aria-hidden="true">' + libro.e + '</span>' +
+        iconoLibro(libro, 'libro__emoji') +
         '<h3 class="libro__titulo">' + escapar(libro.t) + '</h3>' +
         (libro.a ? '<p class="libro__autor">' + escapar(libro.a) + '</p>' : '') +
         '<p class="libro__desc">' + escapar(libro.d) + '</p>' +
