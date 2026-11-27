@@ -618,12 +618,15 @@ main { position: relative; z-index: 1; }
   background: none;
 }
 .estanteria--foto .lomo { pointer-events: none; }
+/* nada de cursor de texto ni selección al pasar o pulsar en la foto */
+.estanteria--foto .estanteria__lomos { cursor: default; -webkit-user-select: none; user-select: none; caret-color: transparent; }
 /* solo la silueta recortada responde al ratón: así la caja de un libro con
    costado no «roba» el ratón al libro de al lado */
 .estanteria--foto .lomo__foto {
   position: absolute;
   inset: 0;
   pointer-events: auto;
+  cursor: pointer;
   background: url("img/estanteria.webp") no-repeat;
 }
 .estanteria--foto .lomo::after { display: none; }
