@@ -223,7 +223,31 @@ p  { margin: 0 0 1em; }
   0%   { box-shadow: 0 0 0 0 rgba(46, 107, 30, .55); }
   100% { box-shadow: 0 0 0 .45rem rgba(46, 107, 30, 0); }
 }
-@media (prefers-reduced-motion: reduce) { .estado--abierto::before { animation: none; } }
+/* Al pasar el ratón (o al llegar con el teclado) la pastilla se alarga
+   y aparece el texto de al lado. En móvil no hay ratón: al tocar se va
+   directamente a Contacto. */
+.estado__mas {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  margin-left: -.5rem;          /* anula el hueco mientras está plegado */
+  font-size: .72rem;
+  font-weight: 600;
+  transition: max-width .4s ease, opacity .25s ease, margin-left .4s ease;
+}
+.estado__mas svg { width: .8rem; height: .8rem; flex: none; }
+@media (hover: hover) {
+  .estado:hover .estado__mas,
+  .estado:focus-visible .estado__mas { max-width: 13rem; opacity: 1; margin-left: 0; transition-delay: 0s, .1s, 0s; }
+}
+.estado:focus-visible .estado__mas { max-width: 13rem; opacity: 1; margin-left: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .estado--abierto::before { animation: none; }
+  .estado__mas { transition: none; }
+}
 /* En móvil caben logo, cartel y menú en una línea: todo un poco más
    compacto y el nombre del pueblo sin partirse */
 .marca__lugar { white-space: nowrap; }
@@ -238,6 +262,7 @@ p  { margin: 0 0 1em; }
   .estado::before { width: .42rem; height: .42rem; }
   .estado__titulo { font-size: .6rem; letter-spacing: .05em; }
   .estado__linea { font-size: .58rem; }
+  .estado__mas { margin-left: -.32rem; }
 }
 @media (max-width: 374px) {
   .marca__lugar { display: none; }

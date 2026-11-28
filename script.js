@@ -885,7 +885,7 @@
   var DIAS_CORTOS = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
 
   // Devuelve si está abierto, una línea corta para el cartel y una frase
-  // completa para el título y los lectores de pantalla.
+  // completa para los lectores de pantalla.
   function calcularEstado() {
     var t = ahoraEnEspana();
     var hoy = HORARIO[t.dia] || [];
@@ -920,10 +920,15 @@
       if (FORZAR === 'cerrado') e = { abierto: false, linea: '', detalle: 'Cerrado hoy' };
       Array.prototype.forEach.call(carteles, function (c) {
         c.className = 'estado ' + (e.abierto ? 'estado--abierto' : 'estado--cerrado');
+        // Al pasar el ratón, la pastilla se alarga y enseña este texto
+        var mas = e.linea ? 'Ver horario y contacto' : (e.abierto ? 'Ver horario y contacto' : 'Horario por confirmar');
         c.innerHTML = '<span class="estado__texto"><span class="estado__titulo">' +
           (e.abierto ? 'Abierto' : 'Cerrado') + '</span>' +
-          (e.linea ? '<span class="estado__linea">' + escapar(e.linea) + '</span>' : '') + '</span>';
-        c.title = e.detalle;
+          (e.linea ? '<span class="estado__linea">' + escapar(e.linea) + '</span>' : '') + '</span>' +
+          '<span class="estado__mas" aria-hidden="true">' + escapar(mas) +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" ' +
+          'stroke-linejoin="round" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>';
+        c.removeAttribute('title');
         c.setAttribute('aria-label', e.detalle + '. Ver horario y contacto');
         c.hidden = false;
       });
