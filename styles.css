@@ -1140,7 +1140,7 @@ html.intro-montada::before { display: none; }
 .intro[data-fase="cierra"] .intro__mover,
 .intro[data-fase="guarda"] .intro__mover { visibility: visible; }
 .intro[data-fase="guarda"] .intro__mover { box-shadow: 0 14px 30px rgba(0, 0, 0, .3); }
-.intro[data-destino="lomo"][data-fase="guarda"] .intro__mover::after { opacity: 1; transition: opacity .5s ease .15s; }
+.intro[data-destino="lomo"][data-fase="guarda"] .intro__mover::after { opacity: 1; transition: opacity .45s ease; }
 
 /* Fase: guarda. Fondo y vídeo se funden y dejan ver la web */
 .intro[data-fase="guarda"]::before,

@@ -702,6 +702,7 @@
         if (r.top < 80 || r.bottom > window.innerHeight - 20) {
           irA(window.pageYOffset + r.top - (window.innerHeight - r.height) / 2);
           desplazado = true;
+          // se mide de nuevo al volar, cuando el scroll ya se ha aplicado
         }
       }
     }
@@ -723,12 +724,33 @@
       }
       var dx = x - a.left, dy = y - a.top;
       libro.style.transformOrigin = '0 0';
-      vuelo = libro.animate([
-        { transform: 'none' },
-        { transform: 'translate(' + dx * 0.4 + 'px,' + (dy * 0.4 - 60) + 'px) scale(' +
-            (0.35 + sx * 0.65) + ',' + (0.55 + sy * 0.45) + ') rotate(-4deg)', offset: 0.5 },
-        { transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + sx + ',' + sy + ')' }
-      ], { duration: 1150, easing: 'cubic-bezier(.45, 0, .25, 1)', fill: 'forwards' });
+      function t(px, py, ex, ey, giro) {
+        return 'translate(' + px + 'px,' + py + 'px) scale(' + ex + ',' + ey + ')' + (giro ? ' rotate(' + giro + ')' : '');
+      }
+      var pasos;
+      if (destino.classList.contains('lomo')) {
+        // Hacia la estantería: primero se estrecha hasta tener forma de lomo
+        // (más grande que el hueco y justo encima de él) y después baja recto
+        // a su sitio. Así se ve entrar en la balda aunque el hueco sea pequeño.
+        var k = Math.min(2.6, (a.height * 0.85) / b.height);
+        var wm = b.width * k, hm = b.height * k;
+        var xm = b.left + b.width / 2 - wm / 2;
+        var ym = Math.max(70, b.top - hm * 0.55);
+        pasos = [
+          { transform: 'none' },
+          { transform: t(xm - a.left, ym - a.top, wm / a.width, hm / a.height, '-3deg'), offset: 0.45 },
+          { transform: t(dx, dy, sx, sy), offset: 0.88 },
+          { transform: t(dx, dy - b.height * 0.06, sx, sy), offset: 0.94 },
+          { transform: t(dx, dy, sx, sy) }
+        ];
+      } else {
+        pasos = [
+          { transform: 'none' },
+          { transform: t(dx * 0.4, dy * 0.4 - 60, 0.35 + sx * 0.65, 0.55 + sy * 0.45, '-4deg'), offset: 0.5 },
+          { transform: t(dx, dy, sx, sy) }
+        ];
+      }
+      vuelo = libro.animate(pasos, { duration: 1250, easing: 'cubic-bezier(.45, 0, .3, 1)', fill: 'forwards' });
       vuelo.onfinish = function () {
         // El lomo real ocupa ya su sitio: el libro volador desaparece al
         // instante para que no asome nada deformado durante el fundido final.
