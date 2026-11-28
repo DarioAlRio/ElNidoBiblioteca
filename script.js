@@ -629,13 +629,19 @@
     intro.innerHTML =
       '<video class="intro__video" muted playsinline preload="auto" aria-hidden="true" ' +
         'poster="' + RAIZ + 'img/intro/poster.webp" src="' + RAIZ + 'img/intro/intro.mp4"></video>' +
-      '<div class="intro__mover" aria-hidden="true"><img src="' + RAIZ + 'img/intro/libro.webp" alt="" width="364" height="472"></div>' +
+      '<div class="intro__mover" aria-hidden="true"><div class="intro__caja">' +
+        '<img class="intro__cara intro__cara--frente" src="' + RAIZ + 'img/intro/libro.webp" alt="" width="364" height="472">' +
+        '<img class="intro__cara intro__cara--lomo" src="' + RAIZ + 'img/intro/lomo.webp" alt="" width="212" height="692">' +
+      '</div></div>' +
       '<button class="intro__saltar" type="button">Saltar animación</button>';
     document.body.insertBefore(intro, document.body.firstChild);
     html.classList.add('intro-montada');
 
     var lienzo = intro.querySelector('.intro__video');
     var libro = intro.querySelector('.intro__mover');
+    var caja = intro.querySelector('.intro__caja');
+    var giro = null;         // el libro girando para enseñar el lomo
+    var GRUESO = 106 / 346;  // ancho del lomo respecto al alto del libro
     var relojes = [];
     var terminado = false;
     var vuelo = null;        // animación del libro hacia su sitio
@@ -658,6 +664,7 @@
       libro.style.top = y + INTRO.libro.y * s + 'px';
       libro.style.width = INTRO.libro.w * s + 'px';
       libro.style.height = INTRO.libro.h * s + 'px';
+      libro.style.setProperty('--grueso', INTRO.libro.h * s * GRUESO + 'px');
     }
     medir();
     window.addEventListener('resize', medir);
@@ -729,20 +736,28 @@
       }
       var pasos;
       if (destino.classList.contains('lomo')) {
-        // Hacia la estantería: primero se estrecha hasta tener forma de lomo
-        // (más grande que el hueco y justo encima de él) y después baja recto
-        // a su sitio. Así se ve entrar en la balda aunque el hueco sea pequeño.
+        // Hacia la estantería: el libro gira sobre sí mismo hasta enseñar el
+        // lomo (más grande que el hueco y justo encima de él) y después baja
+        // recto a su sitio. Tras el giro, el lomo ocupa el borde izquierdo de
+        // la caja, con ancho «grueso».
+        var g = a.height * GRUESO;
         var k = Math.min(2.6, (a.height * 0.85) / b.height);
-        var wm = b.width * k, hm = b.height * k;
-        var xm = b.left + b.width / 2 - wm / 2;
-        var ym = Math.max(70, b.top - hm * 0.55);
+        var u = (b.height * k) / a.height;
+        var xm = b.left + b.width / 2 - (g * u) / 2;
+        var ym = Math.max(70, b.top - b.height * k * 0.55);
+        sx = b.width / g;
+        dx = b.left - a.left;
         pasos = [
           { transform: 'none' },
-          { transform: t(xm - a.left, ym - a.top, wm / a.width, hm / a.height, '-3deg'), offset: 0.45 },
+          { transform: t(xm - a.left, ym - a.top, u, u), offset: 0.5 },
           { transform: t(dx, dy, sx, sy), offset: 0.88 },
           { transform: t(dx, dy - b.height * 0.06, sx, sy), offset: 0.94 },
           { transform: t(dx, dy, sx, sy) }
         ];
+        giro = caja.animate([
+          { transform: 'translateZ(calc(-1 * var(--grueso))) rotateY(0deg)' },
+          { transform: 'translateZ(calc(-1 * var(--grueso))) rotateY(90deg)' }
+        ], { duration: 700, delay: 80, easing: 'cubic-bezier(.5, 0, .3, 1)', fill: 'forwards' });
       } else {
         pasos = [
           { transform: 'none' },
@@ -750,7 +765,7 @@
           { transform: t(dx, dy, sx, sy) }
         ];
       }
-      vuelo = libro.animate(pasos, { duration: 1250, easing: 'cubic-bezier(.45, 0, .3, 1)', fill: 'forwards' });
+      vuelo = libro.animate(pasos, { duration: 1350, easing: 'cubic-bezier(.45, 0, .3, 1)', fill: 'forwards' });
       vuelo.onfinish = function () {
         // El lomo real ocupa ya su sitio: el libro volador desaparece al
         // instante para que no asome nada deformado durante el fundido final.
@@ -789,6 +804,7 @@
       relojes = [];
       lienzo.pause();
       if (vuelo) { vuelo.onfinish = null; vuelo.cancel(); }
+      if (giro) giro.cancel();
       if (destino) destino.style.visibility = '';
       if (desplazado) irA(0);
       intro.classList.add('intro--rapida');

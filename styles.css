@@ -1120,27 +1120,42 @@ html.intro-montada::before { display: none; }
 }
 .intro[data-fase] .intro__video { opacity: 1; }
 
-/* El libro cerrado (foto del último fotograma) que vuela a su sitio */
+/* El libro cerrado que vuela a su sitio: una caja en 3D con la portada
+   (foto del último fotograma) delante y el lomo morado en el costado
+   izquierdo. Hacia la estantería gira 90° para enseñar el lomo. */
 .intro__mover {
   position: absolute;
   visibility: hidden;
-  border-radius: 3px;
-  overflow: hidden;
+  perspective: 900px;
 }
-.intro__mover img { display: block; width: 100%; height: 100%; }
-/* Camino de la estantería la portada se convierte en el lomo morado que
-   espera en la foto de la estantería (img/intro/lomo.webp) */
-.intro__mover::after {
-  content: "";
+.intro__caja {
   position: absolute;
   inset: 0;
-  background: #5b3f8c url("img/intro/lomo.webp") center / 100% 100% no-repeat;
-  opacity: 0;
+  transform-style: preserve-3d;
+  /* gira alrededor del centro del lomo */
+  transform-origin: calc(var(--grueso) / 2) 50% calc(var(--grueso) / 2);
+  transform: translateZ(calc(-1 * var(--grueso)));
+}
+.intro__cara {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+.intro__cara--frente { width: 100%; transform: translateZ(var(--grueso)); }
+.intro__cara--lomo {
+  width: var(--grueso);
+  border-radius: 2px;
+  transform-origin: left center;
+  transform: rotateY(-90deg);
 }
 .intro[data-fase="cierra"] .intro__mover,
 .intro[data-fase="guarda"] .intro__mover { visibility: visible; }
-.intro[data-fase="guarda"] .intro__mover { box-shadow: 0 14px 30px rgba(0, 0, 0, .3); }
-.intro[data-destino="lomo"][data-fase="guarda"] .intro__mover::after { opacity: 1; transition: opacity .45s ease; }
+.intro[data-fase="guarda"] .intro__cara { box-shadow: 0 14px 30px rgba(0, 0, 0, .25); }
 
 /* Fase: guarda. Fondo y vídeo se funden y dejan ver la web */
 .intro[data-fase="guarda"]::before,
