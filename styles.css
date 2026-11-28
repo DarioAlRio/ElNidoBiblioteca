@@ -79,7 +79,13 @@ body::before {
 body::after {
   content: "";
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  /* alto de la pantalla con la barra del navegador escondida: así la foto
+     no se reescala a saltos en el móvil al aparecer y desaparecer la barra */
+  height: 100vh;
+  height: 100lvh;
   pointer-events: none;
   z-index: 0;
   transform: translateZ(0);
@@ -307,7 +313,7 @@ main { position: relative; z-index: 1; }
   .cabecera-foto--alejada {
     background:
       linear-gradient(180deg, rgba(241, 243, 232, .94) 0%, rgba(241, 243, 232, .85) 60%, rgba(241, 243, 232, .5) 100%),
-      var(--foto) right center / auto 100% no-repeat,
+      var(--foto) 88% center / cover no-repeat,
       #f1f3e8;
   }
 }
@@ -350,11 +356,17 @@ main { position: relative; z-index: 1; }
     linear-gradient(90deg, rgba(241, 243, 232, .96) 0%, rgba(241, 243, 232, .9) 38%, rgba(241, 243, 232, .45) 70%, rgba(241, 243, 232, .2) 100%),
     url("img/portada.webp") center / cover no-repeat;
 }
+/* En móvil la sección es muy alta: estirar la foto a todo lo alto la
+   ampliaba tres veces y se veía borrosa. Aquí ocupa solo la primera
+   pantalla, a su tamaño, y se funde con el papel por abajo. */
 @media (max-width: 900px) {
   .portada--foto {
+    --alto-foto: min(100svh, 860px);
     background:
-      linear-gradient(180deg, rgba(241, 243, 232, .93) 0%, rgba(241, 243, 232, .86) 55%, rgba(241, 243, 232, .55) 100%),
-      url("img/portada-800.webp") 30% center / cover no-repeat;
+      linear-gradient(180deg, rgba(241, 243, 232, .9) 0%, rgba(241, 243, 232, .78) 45%, rgba(241, 243, 232, .82) 75%, #f1f3e8 100%)
+        top / 100% var(--alto-foto) no-repeat,
+      url("img/portada.webp") 32% top / auto var(--alto-foto) no-repeat,
+      #f1f3e8;
   }
 }
 
