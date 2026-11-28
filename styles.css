@@ -430,6 +430,27 @@ main { position: relative; z-index: 1; }
   font-size: .88rem;
 }
 .boton--fantasma:hover { border-color: var(--acento); color: var(--acento-osc); }
+/* Botones con lomo: una franja más oscura a la izquierda, como el lomo de
+   un libro, un icono delante y, en los que llevan a otra página, una flecha
+   que avanza al pasar el ratón. */
+.boton { border-left-width: 6px; padding-left: 1.1rem; }
+.boton--principal { border-color: var(--acento); border-left-color: var(--acento-osc); }
+.boton--principal:hover { border-color: var(--acento-osc); border-left-color: #3a2160; }
+.boton--secundario { border-left-color: var(--oliva-osc); }
+.boton--secundario:hover { border-left-color: var(--acento-osc); }
+.boton--fantasma { border-left-width: 4px; border-left-color: #b9bf9c; padding-left: .85rem; }
+.boton--fantasma:hover { border-left-color: var(--acento); }
+.boton__icono { width: 1.15em; height: 1.15em; flex: none; }
+.boton__flecha {
+  width: 1em;
+  height: 1em;
+  flex: none;
+  margin-left: .1rem;
+  transition: transform var(--transicion);
+}
+.boton:hover .boton__flecha,
+.boton:focus-visible .boton__flecha { transform: translateX(4px); }
+.boton:active { transform: translateY(0) scale(.98); }
 
 .tarjeta {
   background: var(--superficie);
