@@ -859,11 +859,75 @@
     document.addEventListener('keydown', alTeclear);
   }
 
+  /* Cartel de abierto / cerrado (cabecera) ---------------------------------
+     Se calcula con la hora de España, sea cual sea la del visitante.
+     HORARIO: para cada día (0 = domingo … 6 = sábado), los tramos de
+     apertura como ['17:00', '20:00']. Mientras esté vacío, sale «Cerrado»
+     con el aviso de horario por confirmar.
+     FORZAR: 'abierto' o 'cerrado' para imponer el cartel (festivos,
+     vacaciones…); null para que mande el horario. */
+  var HORARIO = {
+    1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 0: []
+  };
+  var FORZAR = null;
+  var DIAS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+
+  function ahoraEnEspana() {
+    var partes = {};
+    new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Europe/Madrid', weekday: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23'
+    }).formatToParts(new Date()).forEach(function (p) { partes[p.type] = p.value; });
+    var dia = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(partes.weekday);
+    return { dia: dia, min: Number(partes.hour) * 60 + Number(partes.minute) };
+  }
+  function aMinutos(hhmm) { var p = hhmm.split(':'); return Number(p[0]) * 60 + Number(p[1]); }
+
+  function calcularEstado() {
+    var t = ahoraEnEspana();
+    var hoy = HORARIO[t.dia] || [];
+    for (var i = 0; i < hoy.length; i++) {
+      if (t.min >= aMinutos(hoy[i][0]) && t.min < aMinutos(hoy[i][1])) {
+        return { abierto: true, detalle: 'Abierto ahora, hasta las ' + hoy[i][1] };
+      }
+    }
+    // próxima apertura en los siete días siguientes
+    for (var d = 0; d < 7; d++) {
+      var dia = (t.dia + d) % 7;
+      var tramos = HORARIO[dia] || [];
+      for (var j = 0; j < tramos.length; j++) {
+        if (d > 0 || aMinutos(tramos[j][0]) > t.min) {
+          var cuando = d === 0 ? 'hoy' : d === 1 ? 'mañana' : 'el ' + DIAS[dia];
+          return { abierto: false, detalle: 'Cerrado. Abre ' + cuando + ' a las ' + tramos[j][0] };
+        }
+      }
+    }
+    return { abierto: false, detalle: 'Cerrado. Horario por confirmar' };
+  }
+
+  function iniciarEstado() {
+    var carteles = document.querySelectorAll('[data-estado]');
+    if (!carteles.length) return;
+    function pintar() {
+      var e = calcularEstado();
+      if (FORZAR) e = { abierto: FORZAR === 'abierto', detalle: FORZAR === 'abierto' ? 'Abierto ahora' : 'Cerrado ahora' };
+      Array.prototype.forEach.call(carteles, function (c) {
+        c.className = 'estado ' + (e.abierto ? 'estado--abierto' : 'estado--cerrado');
+        c.textContent = e.abierto ? 'Abierto' : 'Cerrado';
+        c.title = e.detalle;
+        c.setAttribute('aria-label', e.detalle + '. Ver horario y contacto');
+        c.hidden = false;
+      });
+    }
+    pintar();
+    setInterval(pintar, 60000);
+  }
+
   /* Arranque -------------------------------------------------------------- */
   function iniciar() {
     iniciarScrollSuave();
     iniciarIntro();
     latirIntro();
+    iniciarEstado();
     medirCabecera();
     iniciarMenu();
     iniciarAcordeon();

@@ -181,6 +181,58 @@ p  { margin: 0 0 1em; }
   color: var(--texto);
 }
 .marca__icono { width: 54px; height: 54px; flex: 0 0 54px; }
+
+/* Cartel de abierto / cerrado junto al logo (lo rellena script.js) */
+.estado {
+  margin-right: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  padding: .32rem .75rem .32rem .65rem;
+  border: 1px solid;
+  border-radius: 999px;
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform var(--transicion);
+}
+.estado:hover { transform: translateY(-1px); }
+.estado::before {
+  content: "";
+  width: .55rem;
+  height: .55rem;
+  border-radius: 50%;
+  background: currentColor;
+}
+.estado--abierto { color: #2e6b1e; background: #e2f0d9; border-color: #a8cf92; }
+.estado--abierto:hover { color: #2e6b1e; }
+.estado--abierto::before { animation: estado-latido 1.8s ease-out infinite; }
+.estado--cerrado { color: #a3281e; background: #f9e3df; border-color: #e6aca3; }
+.estado--cerrado:hover { color: #a3281e; }
+@keyframes estado-latido {
+  0%   { box-shadow: 0 0 0 0 rgba(46, 107, 30, .55); }
+  100% { box-shadow: 0 0 0 .45rem rgba(46, 107, 30, 0); }
+}
+@media (prefers-reduced-motion: reduce) { .estado--abierto::before { animation: none; } }
+/* En móvil caben logo, cartel y menú en una línea: todo un poco más
+   compacto y el nombre del pueblo sin partirse */
+.marca__lugar { white-space: nowrap; }
+@media (max-width: 480px) {
+  .cabecera__interior { gap: .6rem; }
+  .marca { gap: .45rem; }
+  .marca__icono { width: 44px; height: 44px; flex-basis: 44px; }
+  .marca__nombre { font-size: 1.15rem; }
+  .marca__lugar { font-size: .6rem; letter-spacing: .05em; }
+  .estado { font-size: .62rem; padding: .26rem .5rem .26rem .45rem; gap: .32rem; letter-spacing: .05em; }
+  .estado::before { width: .45rem; height: .45rem; }
+}
+@media (max-width: 389px) {
+  .marca__lugar { display: none; }
+}
+.estado, .menu-boton { flex-shrink: 0; }
 .marca__texto { display: flex; flex-direction: column; line-height: 1.05; }
 .marca__nombre {
   font-family: var(--serif);
