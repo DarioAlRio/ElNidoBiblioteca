@@ -869,7 +869,7 @@
   var HORARIO = {
     1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 0: []
   };
-  var FORZAR = null;
+  var FORZAR = 'abierto';
   var DIAS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
 
   function ahoraEnEspana() {
