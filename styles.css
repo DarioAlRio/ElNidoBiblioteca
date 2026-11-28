@@ -1101,7 +1101,7 @@ html.intro-montada::before { display: none; }
   inset: 0;
   background: radial-gradient(ellipse at 50% 38%, #515e50 0%, #435043 45%, #2f392f 100%);
 }
-/* El vídeo; los bordes se funden con el fondo */
+/* El vídeo; los bordes se funden en óvalo con el fondo */
 .intro__video {
   position: absolute;
   display: block;
@@ -1109,14 +1109,8 @@ html.intro-montada::before { display: none; }
   background: transparent;
   opacity: 0;
   transition: opacity .5s ease;
-  -webkit-mask-image:
-    linear-gradient(to right, transparent, #000 7%, #000 93%, transparent),
-    linear-gradient(to bottom, transparent, #000 9%, #000 91%, transparent);
-  -webkit-mask-composite: source-in;
-  mask-image:
-    linear-gradient(to right, transparent, #000 7%, #000 93%, transparent),
-    linear-gradient(to bottom, transparent, #000 9%, #000 91%, transparent);
-  mask-composite: intersect;
+  -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 66%, rgba(0, 0, 0, .5) 84%, transparent 100%);
+  mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 66%, rgba(0, 0, 0, .5) 84%, transparent 100%);
 }
 .intro[data-fase] .intro__video { opacity: 1; }
 
