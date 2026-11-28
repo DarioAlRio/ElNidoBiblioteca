@@ -882,12 +882,17 @@
   }
   function aMinutos(hhmm) { var p = hhmm.split(':'); return Number(p[0]) * 60 + Number(p[1]); }
 
+  var DIAS_CORTOS = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
+
+  // Devuelve si está abierto, una línea corta para el cartel y una frase
+  // completa para el título y los lectores de pantalla.
   function calcularEstado() {
     var t = ahoraEnEspana();
     var hoy = HORARIO[t.dia] || [];
     for (var i = 0; i < hoy.length; i++) {
       if (t.min >= aMinutos(hoy[i][0]) && t.min < aMinutos(hoy[i][1])) {
-        return { abierto: true, detalle: 'Abierto ahora, hasta las ' + hoy[i][1] };
+        return { abierto: true, linea: 'Hasta las ' + hoy[i][1],
+                 detalle: 'Abierto ahora, hasta las ' + hoy[i][1] };
       }
     }
     // próxima apertura en los siete días siguientes
@@ -896,12 +901,14 @@
       var tramos = HORARIO[dia] || [];
       for (var j = 0; j < tramos.length; j++) {
         if (d > 0 || aMinutos(tramos[j][0]) > t.min) {
-          var cuando = d === 0 ? 'hoy' : d === 1 ? 'mañana' : 'el ' + DIAS[dia];
-          return { abierto: false, detalle: 'Cerrado. Abre ' + cuando + ' a las ' + tramos[j][0] };
+          var corto = d === 0 ? 'hoy' : d === 1 ? 'mañana' : DIAS_CORTOS[dia];
+          var largo = d === 0 ? 'hoy' : d === 1 ? 'mañana' : 'el ' + DIAS[dia];
+          return { abierto: false, linea: 'Abre ' + corto + ' ' + tramos[j][0],
+                   detalle: 'Cerrado. Abre ' + largo + ' a las ' + tramos[j][0] };
         }
       }
     }
-    return { abierto: false, detalle: 'Cerrado. Horario por confirmar' };
+    return { abierto: false, linea: '', detalle: 'Cerrado. Horario por confirmar' };
   }
 
   function iniciarEstado() {
@@ -909,10 +916,13 @@
     if (!carteles.length) return;
     function pintar() {
       var e = calcularEstado();
-      if (FORZAR) e = { abierto: FORZAR === 'abierto', detalle: FORZAR === 'abierto' ? 'Abierto ahora' : 'Cerrado ahora' };
+      if (FORZAR === 'abierto') e = { abierto: true, linea: '', detalle: 'Abierto ahora' };
+      if (FORZAR === 'cerrado') e = { abierto: false, linea: '', detalle: 'Cerrado hoy' };
       Array.prototype.forEach.call(carteles, function (c) {
         c.className = 'estado ' + (e.abierto ? 'estado--abierto' : 'estado--cerrado');
-        c.textContent = e.abierto ? 'Abierto' : 'Cerrado';
+        c.innerHTML = '<span class="estado__texto"><span class="estado__titulo">' +
+          (e.abierto ? 'Abierto' : 'Cerrado') + '</span>' +
+          (e.linea ? '<span class="estado__linea">' + escapar(e.linea) + '</span>' : '') + '</span>';
         c.title = e.detalle;
         c.setAttribute('aria-label', e.detalle + '. Ver horario y contacto');
         c.hidden = false;

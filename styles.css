@@ -182,36 +182,43 @@ p  { margin: 0 0 1em; }
 }
 .marca__icono { width: 54px; height: 54px; flex: 0 0 54px; }
 
-/* Cartel de abierto / cerrado junto al logo (lo rellena script.js) */
+/* Cartel de abierto / cerrado junto al logo (lo rellena script.js).
+   Abierto: verde con un punto que late y la hora de cierre. Cerrado: gris tranquilo con
+   la próxima apertura, para que sea un dato útil y no un aviso. */
 .estado {
   margin-right: auto;
   display: inline-flex;
   align-items: center;
-  gap: .45rem;
-  padding: .32rem .75rem .32rem .65rem;
+  gap: .5rem;
+  padding: .3rem .8rem .3rem .65rem;
   border: 1px solid;
   border-radius: 999px;
-  font-size: .74rem;
-  font-weight: 700;
-  letter-spacing: .08em;
-  text-transform: uppercase;
   text-decoration: none;
   white-space: nowrap;
-  transition: transform var(--transicion);
+  transition: transform var(--transicion), background var(--transicion);
 }
 .estado:hover { transform: translateY(-1px); }
 .estado::before {
   content: "";
-  width: .55rem;
-  height: .55rem;
+  flex: none;
+  width: .5rem;
+  height: .5rem;
   border-radius: 50%;
-  background: currentColor;
+  background: var(--punto);
 }
-.estado--abierto { color: #2e6b1e; background: #e2f0d9; border-color: #a8cf92; }
-.estado--abierto:hover { color: #2e6b1e; }
+.estado__texto { display: flex; flex-direction: column; line-height: 1.1; }
+.estado__titulo {
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.estado__linea { font-size: .68rem; opacity: .85; }
+.estado--abierto { --punto: #2e6b1e; color: #2e6b1e; background: #e2f0d9; border-color: #a8cf92; }
+.estado--abierto:hover { color: #2e6b1e; background: #d8ebcc; }
 .estado--abierto::before { animation: estado-latido 1.8s ease-out infinite; }
-.estado--cerrado { color: #a3281e; background: #f9e3df; border-color: #e6aca3; }
-.estado--cerrado:hover { color: #a3281e; }
+.estado--cerrado { --punto: #a3a296; color: #5e5d54; background: #ecebe4; border-color: #d6d4c8; }
+.estado--cerrado:hover { color: #4a4942; background: #e5e4dc; }
 @keyframes estado-latido {
   0%   { box-shadow: 0 0 0 0 rgba(46, 107, 30, .55); }
   100% { box-shadow: 0 0 0 .45rem rgba(46, 107, 30, 0); }
@@ -226,10 +233,13 @@ p  { margin: 0 0 1em; }
   .marca__icono { width: 44px; height: 44px; flex-basis: 44px; }
   .marca__nombre { font-size: 1.15rem; }
   .marca__lugar { font-size: .6rem; letter-spacing: .05em; }
-  .estado { font-size: .62rem; padding: .26rem .5rem .26rem .45rem; gap: .32rem; letter-spacing: .05em; }
-  .estado::before { width: .45rem; height: .45rem; }
+  .marca__provincia { display: none; }   /* en móvil basta con el pueblo */
+  .estado { padding: .22rem .5rem .22rem .42rem; gap: .32rem; }
+  .estado::before { width: .42rem; height: .42rem; }
+  .estado__titulo { font-size: .6rem; letter-spacing: .05em; }
+  .estado__linea { font-size: .58rem; }
 }
-@media (max-width: 389px) {
+@media (max-width: 374px) {
   .marca__lugar { display: none; }
 }
 .estado, .menu-boton { flex-shrink: 0; }
