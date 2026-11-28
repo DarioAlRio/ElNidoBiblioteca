@@ -656,7 +656,9 @@
       var vw = window.innerWidth, vh = window.innerHeight;
       var cabe = Math.min(vw / INTRO.ancho, vh / INTRO.alto);
       var cubre = Math.max(vw / INTRO.ancho, vh / INTRO.alto);
-      var s = Math.max(cabe, Math.min(cubre, vw / 470));
+      // Un poco alejado (78 %): más pequeño se ve más nítido; los bordes se
+      // funden con el fondo verde.
+      var s = Math.max(cabe, Math.min(cubre, vw / 470)) * 0.78;
       var w = INTRO.ancho * s, h = INTRO.alto * s;
       var x = (vw - w) / 2, y = (vh - h) / 2;
       lienzo.style.cssText = 'width:' + w + 'px;height:' + h + 'px;left:' + x + 'px;top:' + y + 'px';
