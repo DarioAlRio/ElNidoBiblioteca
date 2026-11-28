@@ -1126,9 +1126,7 @@ html.intro-montada::before { display: none; }
   position: absolute;
   inset: 0;
   transform-style: preserve-3d;
-  /* gira alrededor del centro del lomo */
-  transform-origin: calc(var(--grueso) / 2) 50% calc(var(--grueso) / 2);
-  transform: translateZ(calc(-1 * var(--grueso)));
+  /* origen y transformaciones en píxeles: los pone script.js */
 }
 .intro__cara {
   position: absolute;
@@ -1140,7 +1138,7 @@ html.intro-montada::before { display: none; }
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
 }
-.intro__cara--frente { width: 100%; transform: translateZ(var(--grueso)); }
+.intro__cara--frente { width: 100%; }
 .intro__cara--lomo {
   width: var(--grueso);
   border-radius: 2px;

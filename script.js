@@ -35,8 +35,13 @@
 
   // Salto instantáneo que también entiende el scroll suave
   function irA(y) {
+    // salto inmediato: sin el scroll-behavior: smooth del CSS, que en móvil
+    // (sin Lenis) convertiría el salto en un desplazamiento lento
+    var raiz = document.documentElement;
+    raiz.style.scrollBehavior = 'auto';
     if (window.lenis) window.lenis.scrollTo(y, { immediate: true, force: true });
-    else window.scrollTo(0, y);
+    window.scrollTo(0, y);
+    raiz.style.scrollBehavior = '';
   }
 
   /* Scroll suave con inercia (Lenis, cargado desde jsDelivr). Solo la rueda
@@ -640,11 +645,9 @@
     var lienzo = intro.querySelector('.intro__video');
     var libro = intro.querySelector('.intro__mover');
     var caja = intro.querySelector('.intro__caja');
-    var giro = null;         // el libro girando para enseñar el lomo
     var GRUESO = 106 / 346;  // ancho del lomo respecto al alto del libro
     var relojes = [];
     var terminado = false;
-    var vuelo = null;        // animación del libro hacia su sitio
     var destino = null;      // lomo de la estantería o logo de la cabecera
     var desplazado = false;  // si hubo que bajar para ver la estantería
     function fase(nombre) { intro.setAttribute('data-fase', nombre); }
@@ -652,7 +655,9 @@
 
     // Tamaño: llena la pantalla en horizontal; en móvil se encoge lo justo
     // para que el libro abierto quepa a lo ancho (los bordes se funden con el fondo).
+    var congelado = false;   // al empezar el vuelo ya no se recoloca nada
     function medir() {
+      if (congelado) return;
       var vw = window.innerWidth, vh = window.innerHeight;
       var cabe = Math.min(vw / INTRO.ancho, vh / INTRO.alto);
       var cubre = Math.max(vw / INTRO.ancho, vh / INTRO.alto);
@@ -666,7 +671,13 @@
       libro.style.top = y + INTRO.libro.y * s + 'px';
       libro.style.width = INTRO.libro.w * s + 'px';
       libro.style.height = INTRO.libro.h * s + 'px';
-      libro.style.setProperty('--grueso', INTRO.libro.h * s * GRUESO + 'px');
+      // Medidas de la caja 3D en píxeles (sin var() en transformaciones,
+      // que algunos navegadores móviles no resuelven bien)
+      var d = INTRO.libro.h * s * GRUESO;
+      libro.style.setProperty('--grueso', d + 'px');
+      caja.style.transformOrigin = d / 2 + 'px 50% ' + d / 2 + 'px';
+      caja.style.transform = 'translateZ(' + -d + 'px)';
+      caja.firstChild.style.transform = 'translateZ(' + d + 'px)';
     }
     medir();
     window.addEventListener('resize', medir);
@@ -676,10 +687,20 @@
     // entra directamente en la web.
     lienzo.muted = true;
     lienzo.addEventListener('loadeddata', function () { fase('entra'); }, { once: true });
-    lienzo.addEventListener('ended', function () {
+    var acabado = false;
+    function alAcabar() {
+      if (acabado || terminado) return;
+      acabado = true;
       cerrar();
-      despues(250, guardar);
-    }, { once: true });
+      // dos fotogramas más para que el scroll hasta la estantería esté aplicado
+      despues(300, function () {
+        requestAnimationFrame(function () { requestAnimationFrame(guardar); });
+      });
+    }
+    lienzo.addEventListener('ended', alAcabar, { once: true });
+    lienzo.addEventListener('timeupdate', function () {
+      if (lienzo.duration && lienzo.currentTime >= lienzo.duration - 0.05) alAcabar();
+    });
     lienzo.addEventListener('error', saltar);
     var espera = setTimeout(saltar, 6000);
     relojes.push(espera);
@@ -702,6 +723,8 @@
     // Con el fondo aún opaco, la foto del libro sustituye al vídeo, se
     // prepara el hueco en la estantería y se baja hasta ella si no se ve.
     function cerrar() {
+      congelado = true;
+      window.removeEventListener('resize', medir);
       fase('cierra');
       destino = elegirDestino();
       if (!destino) return;
@@ -716,82 +739,99 @@
       }
     }
 
-    // Vuela hasta el destino encogiéndose; en la estantería acaba con la
-    // forma exacta del lomo.
+    // Vuela hasta el destino. Se anima fotograma a fotograma midiendo el
+    // destino en cada paso: si la página se mueve (barra del navegador del
+    // móvil que aparece o se esconde, scroll que aún no ha terminado), el
+    // libro lo sigue y acaba siempre encima de su sitio.
+    var bucleVuelo = 0;
+    function suave(p) {           // entrada y salida suaves
+      return p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+    }
+    function tramo(pasos, p) {    // interpola entre pasos [momento, valores]
+      for (var i = 1; i < pasos.length; i++) {
+        if (p <= pasos[i][0] || i === pasos.length - 1) {
+          var a0 = pasos[i - 1], a1 = pasos[i];
+          var f = Math.min(1, Math.max(0, (p - a0[0]) / (a1[0] - a0[0])));
+          return a0[1].map(function (v, j) { return v + (a1[1][j] - v) * f; });
+        }
+      }
+    }
     function guardar() {
-      if (!destino || !libro.animate) { fase('sale'); despues(350, terminar); return; }
+      if (terminado) return;
+      if (!destino) { fase('sale'); despues(350, terminar); return; }
       fase('guarda');
       var a = libro.getBoundingClientRect();
-      var b = destino.getBoundingClientRect();
-      var sx, sy, x, y;
-      if (destino.classList.contains('lomo')) {
-        sx = b.width / a.width; sy = b.height / a.height; x = b.left; y = b.top;
-      } else {
-        sx = sy = (b.width * 0.85) / a.width;
-        x = b.left + (b.width - a.width * sx) / 2;
-        y = b.top + (b.height - a.height * sy) / 2;
-      }
-      var dx = x - a.left, dy = y - a.top;
+      var aLeft = a.left, aTop = a.top, aW = a.width, aH = a.height;
+      var g = aH * GRUESO;                       // ancho del lomo tras girar
+      var aLomo = destino.classList.contains('lomo');
+      var DURA = 1350, GIRO_INI = 80, GIRO_DURA = 700;
+      var inicio = performance.now();
       libro.style.transformOrigin = '0 0';
-      function t(px, py, ex, ey, giro) {
-        return 'translate(' + px + 'px,' + py + 'px) scale(' + ex + ',' + ey + ')' + (giro ? ' rotate(' + giro + ')' : '');
-      }
-      var pasos;
-      if (destino.classList.contains('lomo')) {
-        // Hacia la estantería: el libro gira sobre sí mismo hasta enseñar el
-        // lomo (más grande que el hueco y justo encima de él) y después baja
-        // recto a su sitio. Tras el giro, el lomo ocupa el borde izquierdo de
-        // la caja, con ancho «grueso».
-        var g = a.height * GRUESO;
-        var k = Math.min(2.6, (a.height * 0.85) / b.height);
-        var u = (b.height * k) / a.height;
-        var xm = b.left + b.width / 2 - (g * u) / 2;
-        var ym = Math.max(70, b.top - b.height * k * 0.55);
-        sx = b.width / g;
-        dx = b.left - a.left;
-        pasos = [
-          { transform: 'none' },
-          { transform: t(xm - a.left, ym - a.top, u, u), offset: 0.5 },
-          { transform: t(dx, dy, sx, sy), offset: 0.88 },
-          { transform: t(dx, dy - b.height * 0.06, sx, sy), offset: 0.94 },
-          { transform: t(dx, dy, sx, sy) }
-        ];
-        giro = caja.animate([
-          { transform: 'translateZ(calc(-1 * var(--grueso))) rotateY(0deg)' },
-          { transform: 'translateZ(calc(-1 * var(--grueso))) rotateY(90deg)' }
-        ], { duration: 700, delay: 80, easing: 'cubic-bezier(.5, 0, .3, 1)', fill: 'forwards' });
-      } else {
-        pasos = [
-          { transform: 'none' },
-          { transform: t(dx * 0.4, dy * 0.4 - 60, 0.35 + sx * 0.65, 0.55 + sy * 0.45, '-4deg'), offset: 0.5 },
-          { transform: t(dx, dy, sx, sy) }
-        ];
-      }
-      vuelo = libro.animate(pasos, { duration: 1350, easing: 'cubic-bezier(.45, 0, .3, 1)', fill: 'forwards' });
-      vuelo.onfinish = function () {
-        // El lomo real ocupa ya su sitio: el libro volador desaparece al
-        // instante para que no asome nada deformado durante el fundido final.
-        libro.style.visibility = 'hidden';
-        destino.style.visibility = '';
-        destino.classList.add('lomo--llega');
-        destino.addEventListener('animationend', function () {
-          destino.classList.remove('lomo--llega');
-        }, { once: true });
-        fase('sale');
-        despues(320, terminar);
-        if (desplazado) {
-          setTimeout(function () {
-            if (window.lenis) window.lenis.scrollTo(0, { duration: 1.2 });
-            else window.scrollTo({ top: 0, behavior: 'smooth' });
-          }, 1400);
+
+      function paso(ahora) {
+        if (terminado) return;
+        var t = Math.max(0, ahora - inicio);
+        var p = suave(Math.min(1, t / DURA));
+        var b = destino.getBoundingClientRect();
+        var v;   // [x, y, escala x, escala y, giro en grados]
+        if (aLomo) {
+          // Gira para enseñar el lomo (más grande que el hueco y justo
+          // encima de él) y después baja recto a su sitio.
+          var k = Math.min(2.6, (aH * 0.85) / b.height);
+          var u = (b.height * k) / aH;
+          var fin = [b.left - aLeft, b.top - aTop, b.width / g, b.height / aH, 0];
+          v = tramo([
+            [0, [0, 0, 1, 1, 0]],
+            [0.5, [b.left + b.width / 2 - (g * u) / 2 - aLeft,
+                   Math.max(70, b.top - b.height * k * 0.55) - aTop, u, u, 0]],
+            [0.88, fin],
+            [0.94, [fin[0], fin[1] - b.height * 0.06, fin[2], fin[3], 0]],
+            [1, fin]
+          ], p);
+          var q = Math.min(1, Math.max(0, (t - GIRO_INI) / GIRO_DURA));
+          caja.style.transform = 'translateZ(' + -g + 'px) rotateY(' + 90 * suave(q) + 'deg)';
+        } else {
+          var e = (b.width * 0.85) / aW;
+          var fx = b.left + (b.width - aW * e) / 2 - aLeft;
+          var fy = b.top + (b.height - aH * e) / 2 - aTop;
+          v = tramo([
+            [0, [0, 0, 1, 1, 0]],
+            [0.5, [fx * 0.4, fy * 0.4 - 60, 0.35 + e * 0.65, 0.55 + e * 0.45, -4]],
+            [1, [fx, fy, e, e, 0]]
+          ], p);
         }
-      };
+        libro.style.transform = 'translate(' + v[0] + 'px,' + v[1] + 'px) scale(' + v[2] + ',' + v[3] + ')' +
+          (v[4] ? ' rotate(' + v[4] + 'deg)' : '');
+        if (t < DURA) { bucleVuelo = requestAnimationFrame(paso); return; }
+        aterrizar();
+      }
+      bucleVuelo = requestAnimationFrame(paso);
+    }
+
+    function aterrizar() {
+      // El lomo real ocupa ya su sitio: el libro volador desaparece al
+      // instante para que no asome nada deformado durante el fundido final.
+      libro.style.visibility = 'hidden';
+      destino.style.visibility = '';
+      destino.classList.add('lomo--llega');
+      destino.addEventListener('animationend', function () {
+        destino.classList.remove('lomo--llega');
+      }, { once: true });
+      fase('sale');
+      despues(320, terminar);
+      if (desplazado) {
+        setTimeout(function () {
+          if (window.lenis) window.lenis.scrollTo(0, { duration: 1.2 });
+          else window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, 1400);
+      }
     }
 
     function terminar() {
       if (terminado) return;
       terminado = true;
       relojes.forEach(clearTimeout);
+      cancelAnimationFrame(bucleVuelo);
       document.removeEventListener('keydown', alTeclear);
       window.removeEventListener('resize', medir);
       lienzo.pause();
@@ -805,8 +845,8 @@
       relojes.forEach(clearTimeout);
       relojes = [];
       lienzo.pause();
-      if (vuelo) { vuelo.onfinish = null; vuelo.cancel(); }
-      if (giro) giro.cancel();
+      cancelAnimationFrame(bucleVuelo);
+      libro.style.visibility = 'hidden';
       if (destino) destino.style.visibility = '';
       if (desplazado) irA(0);
       intro.classList.add('intro--rapida');
