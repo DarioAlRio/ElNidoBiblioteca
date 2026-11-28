@@ -244,8 +244,11 @@
       '<p style="color:var(--texto-suave)">' + escapar(libro.d) + '</p>' +
       '<div class="libro__etiquetas" style="margin-bottom:1rem">' + etiquetas + '</div>' +
       (filas ? '<dl class="datos-lista">' + filas + '</dl>' : '') +
-      '<p style="margin:1.4rem 0 0;font-size:.88rem;color:var(--texto-suave)">' +
-      'Para reservarlo, pásate por la biblioteca o escríbenos.</p>';
+      (estaPrestado(libro)
+        ? '<p class="aviso-prestado">Ahora está prestado. Si quieres, te lo reservamos ' +
+          'y te avisamos en cuanto vuelva: pásate por la biblioteca o escríbenos.</p>'
+        : '<p style="margin:1.4rem 0 0;font-size:.88rem;color:var(--texto-suave)">' +
+          'Para reservarlo, pásate por la biblioteca o escríbenos.</p>');
   }
 
   /* 5. Estantería interactiva (portada) ---------------------------------- */
@@ -380,7 +383,10 @@
       }
     }
 
+    var huecoActual = null;
+    alCargarHoja.push(function () { if (huecoActual !== null) mostrar(huecoActual); });
     function mostrar(hueco) {
+      huecoActual = hueco;
       var libro = libros[indices[hueco]];
       Array.prototype.forEach.call(lomos.querySelectorAll('.lomo'), function (el) {
         el.setAttribute('aria-pressed', el.dataset.hueco === String(hueco) ? 'true' : 'false');
@@ -392,6 +398,7 @@
       panel.innerHTML =
         iconoLibro(libro, 'recomendacion__emoji') +
         '<div>' +
+        (estaPrestado(libro) ? '<span class="marca-prestado">Prestado ahora</span>' : '') +
         '<p class="recomendacion__titulo">' + escapar(libro.t) + '</p>' +
         (libro.a ? '<p class="recomendacion__autor">' + escapar(libro.a) + '</p>' : '') +
         '<p class="recomendacion__desc">' + escapar(libro.d) + '</p>' +
@@ -489,8 +496,11 @@
         return '<span class="etiqueta' + (i === 0 ? ' etiqueta--publico' : '') + '">' +
           escapar(t) + '</span>';
       }).join(' ');
-      return '<li><button type="button" class="libro" data-id="' + libro._n + '">' +
+      var prestado = estaPrestado(libro);
+      return '<li><button type="button" class="libro' + (prestado ? ' libro--prestado' : '') +
+        '" data-id="' + libro._n + '">' +
         iconoLibro(libro, 'libro__emoji') +
+        (prestado ? '<span class="marca-prestado">Prestado</span>' : '') +
         '<h3 class="libro__titulo">' + escapar(libro.t) + '</h3>' +
         (libro.a ? '<p class="libro__autor">' + escapar(libro.a) + '</p>' : '') +
         '<p class="libro__desc">' + escapar(libro.d) + '</p>' +
@@ -596,6 +606,17 @@
     if (q) entrada.value = q;
 
     pintar();
+    // al llegar la lista de préstamos, se repinta sin perder lo que se ve
+    alCargarHoja.push(function () {
+      var foco = document.activeElement && document.activeElement.closest &&
+        document.activeElement.closest('.libro');
+      var idFoco = foco ? foco.dataset.id : null;
+      pintar();
+      if (idFoco !== null) {
+        var b = lista.querySelector('.libro[data-id="' + idFoco + '"]');
+        if (b) b.focus({ preventScroll: true });
+      }
+    });
   }
 
   /* Intro de bienvenida ----------------------------------------------------
@@ -859,6 +880,136 @@
     document.addEventListener('keydown', alTeclear);
   }
 
+  /* Hoja de Google (la que edita la biblioteca) -----------------------------
+     Dos pestañas publicadas en la web como CSV (Archivo → Compartir →
+     Publicar en la web). Pega aquí sus enlaces:
+     - ESTADO: una celda con «Según horario», «Abierto» o «Cerrado».
+     - PRESTAMOS: columna A con los libros prestados ahora mismo, escritos
+       como en la pestaña «Catálogo» de la hoja (lista desplegable). Si un
+       libro tiene varios ejemplares, una fila por cada uno prestado.
+     Sin enlaces, o si la hoja no responde, la web funciona igual: el cartel
+     sigue el horario y ningún libro sale como prestado.
+     Nunca pongas nombres de personas en las pestañas publicadas. */
+  var HOJA = {
+    estado: '',
+    prestamos: ''
+  };
+
+  var hojaDatos = { estado: null, prestados: null };   // null = sin datos
+  var alCargarHoja = [];
+
+  function normalizar(txt) {
+    return sinAcentos(txt).replace(/[^a-z0-9]+/g, ' ').trim();
+  }
+  // Cómo se nombra un libro en la hoja: el título solo, o, si hay varios
+  // con el mismo título, «Título — Autor · Editorial».
+  function clavesLibro(libro) {
+    var largo = libro.t + ' — ' + [libro.a, libro.ed].filter(Boolean).join(' · ');
+    return [normalizar(libro.t), normalizar(largo)];
+  }
+  // Hay unos pocos libros con varios ejemplares iguales: solo sale como
+  // prestado cuando en la hoja aparece tantas veces como ejemplares hay.
+  var copias = null;
+  function ejemplares(clave) {
+    if (!copias) {
+      copias = {};
+      (window.LIBROS || []).forEach(function (b) {
+        var k = clavesLibro(b)[1];
+        copias[k] = (copias[k] || 0) + 1;
+      });
+    }
+    return copias[clave] || 1;
+  }
+  function estaPrestado(libro) {
+    var p = hojaDatos.prestados;
+    if (!p || !libro) return false;
+    var c = clavesLibro(libro);
+    var veces = (p[c[0]] || 0) + (c[1] !== c[0] ? p[c[1]] || 0 : 0);
+    return veces > 0 && veces >= ejemplares(c[1]);
+  }
+
+  // CSV sencillo con comillas («"a, b"» y «""» dentro de comillas)
+  function leerCSV(texto) {
+    var filas = [], fila = [], celda = '', comillas = false;
+    for (var i = 0; i < texto.length; i++) {
+      var ch = texto[i];
+      if (comillas) {
+        if (ch === '"' && texto[i + 1] === '"') { celda += '"'; i++; }
+        else if (ch === '"') comillas = false;
+        else celda += ch;
+      } else if (ch === '"') comillas = true;
+      else if (ch === ',') { fila.push(celda); celda = ''; }
+      else if (ch === '\n' || ch === '\r') {
+        if (ch === '\r' && texto[i + 1] === '\n') i++;
+        fila.push(celda); filas.push(fila); fila = []; celda = '';
+      } else celda += ch;
+    }
+    if (celda || fila.length) { fila.push(celda); filas.push(fila); }
+    return filas;
+  }
+
+  function interpretarEstado(filas) {
+    for (var i = 0; i < filas.length; i++) {
+      for (var j = 0; j < filas[i].length; j++) {
+        var v = normalizar(filas[i][j]);
+        if (v === 'abierto' || v === 'cerrado') return v;
+        if (v.indexOf('segun horario') === 0 || v === 'horario' || v === 'automatico') return 'horario';
+      }
+    }
+    return 'horario';
+  }
+  function interpretarPrestamos(filas) {
+    var mapa = {};
+    filas.forEach(function (f, i) {
+      var v = normalizar(f[0] || '');
+      if (!v || (i === 0 && (v === 'libro' || v === 'libros' || v === 'libros prestados'))) return;
+      mapa[v] = (mapa[v] || 0) + 1;
+    });
+    return mapa;
+  }
+
+  function avisarHoja() {
+    alCargarHoja.forEach(function (fn) { try { fn(); } catch (e) { /* sigue */ } });
+  }
+
+  function cargarHoja() {
+    // Lo último que se leyó en esta pestaña, para pintar sin esperar (la
+    // hoja tarda unos cientos de milisegundos en responder).
+    try {
+      var guardado = JSON.parse(sessionStorage.getItem('elnido-hoja') || 'null');
+      if (guardado) {
+        hojaDatos.estado = guardado.estado;
+        hojaDatos.prestados = guardado.prestados;
+        avisarHoja();
+      }
+    } catch (e) { /* sin almacenamiento */ }
+
+    function pedir(url) {
+      if (!url || !window.fetch) return Promise.resolve(null);
+      var corte = window.AbortController ? new AbortController() : null;
+      if (corte) setTimeout(function () { corte.abort(); }, 8000);
+      return fetch(url, { cache: 'no-store', signal: corte ? corte.signal : undefined })
+        .then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
+        .then(leerCSV)
+        .catch(function () { return null; });           // si falla, se ignora
+    }
+    var hayLibros = !!document.querySelector('[data-catalogo], [data-estanteria]');
+    if (!HOJA.estado && !(hayLibros && HOJA.prestamos)) return;
+    actualizar();
+    setInterval(actualizar, 5 * 60000);   // si la página sigue abierta, se refresca
+    function actualizar() {
+      Promise.all([pedir(HOJA.estado), hayLibros ? pedir(HOJA.prestamos) : Promise.resolve(null)])
+        .then(function (r) {
+          if (r[0]) hojaDatos.estado = interpretarEstado(r[0]);
+          if (r[1]) hojaDatos.prestados = interpretarPrestamos(r[1]);
+          try {
+            sessionStorage.setItem('elnido-hoja', JSON.stringify(hojaDatos));
+          } catch (e) { /* sin almacenamiento */ }
+          avisarHoja();
+        });
+    }
+  }
+
   /* Cartel de abierto / cerrado (cabecera) ---------------------------------
      Se calcula con la hora de España, sea cual sea la del visitante.
      HORARIO: para cada día (0 = domingo … 6 = sábado), los tramos de
@@ -916,8 +1067,9 @@
     if (!carteles.length) return;
     function pintar() {
       var e = calcularEstado();
-      if (FORZAR === 'abierto') e = { abierto: true, linea: '', detalle: 'Abierto ahora' };
-      if (FORZAR === 'cerrado') e = { abierto: false, linea: '', detalle: 'Cerrado hoy' };
+      var forzar = FORZAR || (hojaDatos.estado !== 'horario' && hojaDatos.estado);
+      if (forzar === 'abierto') e = { abierto: true, linea: '', detalle: 'Abierto ahora' };
+      if (forzar === 'cerrado') e = { abierto: false, linea: '', detalle: 'Cerrado ahora' };
       Array.prototype.forEach.call(carteles, function (c) {
         c.className = 'estado ' + (e.abierto ? 'estado--abierto' : 'estado--cerrado');
         // Al pasar el ratón, la pastilla se alarga y enseña este texto
@@ -935,6 +1087,7 @@
     }
     pintar();
     setInterval(pintar, 60000);
+    alCargarHoja.push(pintar);
   }
 
   /* Arranque -------------------------------------------------------------- */
@@ -948,6 +1101,7 @@
     iniciarAcordeon();
     iniciarEstanteria();
     iniciarCatalogo();
+    cargarHoja();
     var anio = document.querySelector('[data-anio]');
     if (anio) anio.textContent = new Date().getFullYear();
   }
